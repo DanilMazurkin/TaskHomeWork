@@ -1,6 +1,9 @@
 import good_info
 
 def main():
+    """
+    Main function with entry point
+    """
     info_list = good_info.GoodInfoList()
     list_goods = info_list.get_from_file("goods2.info")
     info_list.add_goods_in_list(list_goods)
