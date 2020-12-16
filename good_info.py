@@ -218,15 +218,15 @@ class GoodInfoList:
         :type good_date: string
         :param shelf_life: shelf life of date
         :type shelf_life:
-        :return: return true if shelf life not end and return
-        False if shelf life ending
+        :return: return true if shelf life end and return
+        False if shelf life not end
         """
         
         shelf_life = timedelta(days=int(shelf_life))
-        enging_shelf_life = good_date + shelf_life
+        ending_shelf_life = good_date + shelf_life
         today = datetime.today()
 
-        if today <= enging_shelf_life:
+        if today > ending_shelf_life:
             return True
         else:
             return False

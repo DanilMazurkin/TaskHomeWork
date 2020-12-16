@@ -9,7 +9,6 @@ def main():
     list_of_removing_goods = info_list.remove_ending_shell_life()
     print("Список удаленных товаров")
     print(list_of_removing_goods)
-    print(info_list)
     info_list.get_std()
     info_list.remove_last()
     price_sort = info_list.sort("price")
@@ -49,6 +48,8 @@ def main():
 
     print("Всего позиций товаров: "
         " {count} \n".format(count=len(info_list)))
+    print("Все товары: \n")
+    print(info_list)
 
 if __name__ == '__main__':
     main()
