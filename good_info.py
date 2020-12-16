@@ -252,8 +252,9 @@ class GoodInfoList:
     
     def remove_ending_shell_life(self):
         """
-        If the expiration date has expired, then the product is removed
-        :return: Fnction nothing return
+        If the expiration in list date has expired, then the product is removed
+        :return: GoodInfoList with removing goods
+        :rtype: GoodInfoList
         """
 
         list_of_removing_goods = GoodInfoList()
