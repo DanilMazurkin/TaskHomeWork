@@ -250,7 +250,7 @@ class GoodInfoList:
         else:
             return True
     
-    def remove_by_ending_shell_life(self):
+    def check_date_import(self):
         """
         If the expiration in list date has expired, then the product is removed
         :return: GoodInfoList with removing goods
