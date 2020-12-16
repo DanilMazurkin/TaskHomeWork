@@ -10,7 +10,7 @@ class GoodInfo:
     name (str): name product
     price (float): price product
     amount (int): amount product
-    date_product (datetime): date of delivery
+    date_import (datetime): date import
     shelf_life (int) (shelf_life): shelf life
 
     Methods:
@@ -78,7 +78,7 @@ class GoodInfoList:
     get_list_most_expensive()
     get_list_ending_goods()
     sort(key)
-    __getitem__(key)
+    __getitem__(name)
     get_value_info()
     get_list_with_cheap_goods()
 
@@ -241,16 +241,16 @@ class GoodInfoList:
         current date, else false
         :rtype: bool 
         """
-        good_date =  datetime.strptime(good_date, "%Y-%m-%d")
+        date_import =  datetime.strptime(good_date, "%Y-%m-%d")
         today = datetime.today()
 
-        if good_date < today:
+        if date_import < today:
             print("Дата поставки меньше текущей!")
             return False
         else:
             return True
     
-    def remove_ending_shell_life(self):
+    def remove_by_ending_shell_life(self):
         """
         If the expiration in list date has expired, then the product is removed
         :return: GoodInfoList with removing goods
