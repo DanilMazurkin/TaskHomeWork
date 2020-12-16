@@ -1,4 +1,5 @@
 from math import sqrt
+from datetime import datetime, timedelta
 
 class GoodInfo:
     """
@@ -9,6 +10,8 @@ class GoodInfo:
     name (str): name product
     price (float): price product
     amount (int): amount product
+    date_product (datetime): date of delivery
+    shelf_life (int) (shelf_life): shelf life
 
     Methods:
 
@@ -17,23 +20,26 @@ class GoodInfo:
 
     """
 
-    def __init__(self, name, price, amount):
+    def __init__(self, name, price, amount, date_import, shelf_life):
         """
-        Initialize name, price, amount
+        Initialize name, price, amount, date_import, shellf_life
 
         :param name: name product
         :type name: string
-
         :param price: price product
         :type price: Number
-
         :param amount: amount product
         :type amount: Number
-
+        :param date_import: string with date
+        :type date_import: string
+        :param shell_life: Shell life good
+        :type shell_life: Integer
         """
         self.name = name
         self.price = price
         self.amount = amount
+        self.date_import = date_import
+        self.shelf_life = shelf_life
 
     def __str__(self):
         """
@@ -41,10 +47,13 @@ class GoodInfo:
         :return: string represents good
         :rtype: string
         """
-        return "{name} : (Количество) {amount} (Цена) {price}".format(
+        return "{name} : (Количество) {amount} (Цена) {price} \n \
+                (Дата) {date} (Срок годности) {shelf_life} \n".format(
                 name=self.name,
                 amount=self.amount,
-                price=self.price
+                price=self.price,
+                date=self.date_import,
+                shelf_life=self.shelf_life
         )        
 
 
@@ -81,9 +90,22 @@ class GoodInfoList:
         """
         self.list_with_goods = list()
 
+    def __str__(self):
+        """
+        Function make string with represents GoodInfo
+        :return: string represents GoodInfo
+        :rtype: string
+        """
+        string_with_list = ""
+
+        for elem in self.list_with_goods:
+            string_with_list += str(elem) + '\n'
+       
+        return string_with_list
+
     def __len__(self):
         """
-        Return len GoodInfoList
+        Return length GoodInfoList
         """
         return len(self.list_with_goods)
 
@@ -104,7 +126,7 @@ class GoodInfoList:
         :rtype: float
         """
         value_info = self.get_value_info()
-        print(value_info)
+        mean = value_info['mean']
         squared_deviations = list()
         
         for good_data in self.list_with_goods:
@@ -114,7 +136,7 @@ class GoodInfoList:
 
         return sqrt(dispersion)
         
-    def add(self, name, price, amount):
+    def add(self, name, price, amount, date_import, shelf_life):
         """"
         :param name: Name Good
         :param price: Price good
@@ -124,7 +146,8 @@ class GoodInfoList:
         :type amount: Number
         :return: function nothing return
         """
-        self.list_with_goods.append(GoodInfo(name, price, amount))
+        self.list_with_goods.append(GoodInfo(name, price, amount, 
+                                            date_import, shelf_life))
 
     @staticmethod
     def get_from_file(filename):
@@ -155,12 +178,14 @@ class GoodInfoList:
                 name_product = product_data[0]
                 price_product = int(product_data[1])
                 product_amount = int(product_data[2])
-                self.add(name_product, price_product, product_amount)
+                product_date =  datetime.strptime(product_data[3], "%Y-%m-%d")
+                shelf_life = int(product_data[4])
+                self.add(name_product, price_product, product_amount, 
+                        product_date, shelf_life)
             else:
                 print("Следующая строка не была обработана: ", product)
 
-    @staticmethod
-    def __check_product_data(good_data):
+    def __check_product_data(self, good_data):
         """
         Check format data product from list with products
         :param good_data: list with data about product
@@ -170,7 +195,7 @@ class GoodInfoList:
         :rtype: Return bool value
         """
 
-        if len(good_data) != 3:
+        if len(good_data) != 5:
             return False
 
         if  (len(good_data[0]) == 0 and 
@@ -179,11 +204,68 @@ class GoodInfoList:
         
         good_data[2] = good_data[2].replace('\n', '')
 
-        if good_data[1].isdigit() and good_data[2].isdigit():
+        if (good_data[1].isdigit() and good_data[2].isdigit() and 
+            self.__check_date(good_data[3])):
             return True
         else:
             return False
-       
+    
+    @staticmethod
+    def __check_shell_life_good(good_date, shelf_life):
+        """
+        Check shell life
+        :param good_date: str with date
+        :type good_date: string
+        :param shelf_life: shelf life of date
+        :type shelf_life:
+        :return: return true if shelf life not end and return
+        False if shelf life ending
+        """
+        
+        shelf_life = timedelta(days=int(shelf_life))
+        enging_shelf_life = good_date + shelf_life
+        today = datetime.today()
+
+        if today <= enging_shelf_life:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def __check_date(good_date):
+        """
+        Check date on right format
+        :param good_date: string with date 
+        :type good_date: string
+        :return: true if date of delivery less then 
+        current date, else false
+        :rtype: bool 
+        """
+        good_date =  datetime.strptime(good_date, "%Y-%m-%d")
+        today = datetime.today()
+
+        if good_date < today:
+            print("Дата поставки меньше текущей!")
+            return False
+        else:
+            return True
+    
+    def check_shell_life_goods(self):
+        """
+        If the expiration date has expired, then the product is removed
+        :return: Fnction nothing return
+        """
+
+        list_of_removing_goods = GoodInfoList()
+
+        for good in self.list_with_goods:
+            if self.__check_shell_life_good(good.date_import, good.shelf_life):
+                list_of_removing_goods.add(good.name, good.price, good.amount, 
+                                           good.date_import, good.shelf_life)
+                self.remove(good.name)
+    
+        return list_of_removing_goods
+        
     def remove(self, name):
         """
         Remove object with name
@@ -287,20 +369,28 @@ class GoodInfoList:
         else:
             raise AttributeError
 
-    def __getitem__(self, key):
+    def __getitem__(self, name):
         """
         receiving  by []
-        :param key: index in list with goods
-        :type key: Number
+        :param key: name in list with goods
+        :type key: string
         :return: object by key
         :rtype: object good from list with goods if exsits good by
-        key, else raise IndexError
+        key, else raise KeyError
         """
-        if self.list_with_goods[key] in self.list_with_goods:
-            return self.list_with_goods[key]
+        
+        list_of_goods = GoodInfoList()
+
+        for good in self.list_with_goods:
+            if good.name == name:
+                list_of_goods.add(good.name, good.price, good.amount, 
+                                  good.date_import, good.shelf_life)
+        
+        if len(list_of_goods) == 0:
+            raise KeyError
         else:
-            raise IndexError
-    
+            return list_of_goods
+
     def get_value_info(self): 
         """ 
         Function get values about products

@@ -1,9 +1,15 @@
 import good_info
 
-if __name__ == '__main__':
+def main():
     info_list = good_info.GoodInfoList()
     list_goods = info_list.get_from_file("goods2.info")
     info_list.add_goods_in_list(list_goods)
+    access_by_name = info_list["сушки 1кг."]
+    print(access_by_name)
+    list_of_removing_goods = info_list.check_shell_life_goods()
+    print("Список удаленных товаров")
+    print(list_of_removing_goods)
+    print(info_list)
     info_list.get_std()
     info_list.remove_last()
     price_sort = info_list.sort("price")
@@ -44,9 +50,5 @@ if __name__ == '__main__':
     print("Всего позиций товаров: "
         " {count} \n".format(count=len(info_list)))
 
-    for good in info_list:
-        print(good)
-
-    # для удобства вывода, чтобы не городить циклы
-    # лучше переопределить __str__() в GoodInfoList
-    print(info_list)
+if __name__ == '__main__':
+    main()
