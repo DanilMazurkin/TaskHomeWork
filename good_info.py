@@ -204,8 +204,8 @@ class GoodInfoList:
         
         good_data[2] = good_data[2].replace('\n', '')
 
-        if (good_data[1].isdigit() and good_data[2].isdigit() and 
-            self.__check_date(good_data[3])):
+        if (good_data[1].isdigit() and good_data[2].isdigit() 
+            and self.__check_date(good_data[3])):
             return True
         else:
             return False
@@ -250,7 +250,7 @@ class GoodInfoList:
         else:
             return True
     
-    def check_shell_life_goods(self):
+    def remove_ending_shell_life(self):
         """
         If the expiration date has expired, then the product is removed
         :return: Fnction nothing return
