@@ -2,11 +2,10 @@ import good_info
 
 def main():
     info_list = good_info.GoodInfoList()
-    list_goods = info_list.get_from_file("goods2.info")
-    info_list.add_goods_in_list(list_goods)
+    info_list.get_from_file("goods2.info")
     access_by_name = info_list["сушки 1кг."]
     print(access_by_name)
-    list_of_removing_goods = info_list.check_date_import()
+    list_of_removing_goods = info_list.check_date_import_list()
     print("Список удаленных товаров")
     print(list_of_removing_goods)
     info_list.get_std()

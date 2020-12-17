@@ -1,6 +1,7 @@
 from math import sqrt
 from datetime import datetime, timedelta
 
+
 class GoodInfo:
     """
     Represents good info
@@ -54,8 +55,73 @@ class GoodInfo:
                 price=self.price,
                 date=self.date_import,
                 shelf_life=self.shelf_life
-        )        
+        )
 
+    @staticmethod
+    def check_product_data(good_data):
+        """
+        Check format data product from list with products
+        :param good_data: list with data about product
+        :type good_data: list
+        :return: Return True if format right else return
+        false if format not right
+        :rtype: Return bool value
+        """
+
+        if len(good_data) != 5:
+            return False
+
+        if  (len(good_data[0]) == 0 and 
+            len(good_data[1]) == 0 and len(good_data[2]) == 0):
+            return False
+        
+        good_data[2] = good_data[2].replace('\n', '')
+
+        if (good_data[1].isdigit() and good_data[2].isdigit() 
+            and GoodInfo.__check_date(good_data[3])):
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def __check_date(good_date):
+        """
+        Check date on right format
+        :param good_date: string with date 
+        :type good_date: string
+        :return: true if date of delivery less then 
+        current date, else false
+        :rtype: bool 
+        """
+        date_import =  datetime.strptime(good_date, "%Y-%m-%d")
+        today = datetime.today()
+
+        if date_import < today:
+            print("Дата поставки меньше текущей!")
+            return False
+        else:
+            return True
+    
+    @staticmethod
+    def check_shell_life_good(good_date, shelf_life):
+        """
+        Check shell life
+        :param good_date: str with date
+        :type good_date: string
+        :param shelf_life: shelf life of date
+        :type shelf_life:
+        :return: return true if shelf life end and return
+        False if shelf life not end
+        """
+        
+        shelf_life = timedelta(days=int(shelf_life))
+        ending_shelf_life = good_date + shelf_life
+        today = datetime.today()
+
+        if today > ending_shelf_life:
+            return True
+        else:
+            return False
 
 class GoodInfoList:
     """
@@ -141,40 +207,32 @@ class GoodInfoList:
         :param name: Name Good
         :param price: Price good
         :param amount: amount good
+        :param date_import: date import product 
+        :param shelf_life: shelf_life product
         :type name: string
         :type price: Number
         :type amount: Number
+        :type date_import: datetime
+        :type shelf_life: Number
         :return: function nothing return
         """
         self.list_with_goods.append(GoodInfo(name, price, amount, 
                                             date_import, shelf_life))
 
-    @staticmethod
-    def get_from_file(filename):
+    def get_from_file(self, filename):
         """
-        Forms list of goods from file data
+        Forms GoodInfoList of goods from file data
         :param filename: filepath for data
         :type filename: string
-        :return: Return list with goods
-        :rtype: list 
+        :return: Function Nothing Return
         """
         file_data = open(filename, "r", encoding="utf-8")
-        list_from_file = file_data.readlines()        
-        file_data.close()
-        
-        return list_from_file
+        list_from_file = file_data.readlines()   
 
-    def add_goods_in_list(self, list_with_products):
-        """
-        Add good in list
-        :param list_with_products: list of GoodInfo
-        :type list_with_products: list
-        :return: Function nothing return
-        """
-        for product in list_with_products:
+        for product in list_from_file:
             product_data = product.split(":")
 
-            if self.__check_product_data(product_data):
+            if GoodInfo.check_product_data(product_data):
                 name_product = product_data[0]
                 price_product = int(product_data[1])
                 product_amount = int(product_data[2])
@@ -185,72 +243,9 @@ class GoodInfoList:
             else:
                 print("Следующая строка не была обработана: ", product)
 
-    def __check_product_data(self, good_data):
-        """
-        Check format data product from list with products
-        :param good_data: list with data about product
-        :type good_data: list
-        :return: Return True if format right else return
-        false if format not right
-        :rtype: Return bool value
-        """
-
-        if len(good_data) != 5:
-            return False
-
-        if  (len(good_data[0]) == 0 and 
-            len(good_data[1]) == 0 and len(good_data[2]) == 0):
-            return False
-        
-        good_data[2] = good_data[2].replace('\n', '')
-
-        if (good_data[1].isdigit() and good_data[2].isdigit() 
-            and self.__check_date(good_data[3])):
-            return True
-        else:
-            return False
-    
-    @staticmethod
-    def __check_shell_life_good(good_date, shelf_life):
-        """
-        Check shell life
-        :param good_date: str with date
-        :type good_date: string
-        :param shelf_life: shelf life of date
-        :type shelf_life:
-        :return: return true if shelf life end and return
-        False if shelf life not end
-        """
-        
-        shelf_life = timedelta(days=int(shelf_life))
-        ending_shelf_life = good_date + shelf_life
-        today = datetime.today()
-
-        if today > ending_shelf_life:
-            return True
-        else:
-            return False
-
-    @staticmethod
-    def __check_date(good_date):
-        """
-        Check date on right format
-        :param good_date: string with date 
-        :type good_date: string
-        :return: true if date of delivery less then 
-        current date, else false
-        :rtype: bool 
-        """
-        date_import =  datetime.strptime(good_date, "%Y-%m-%d")
-        today = datetime.today()
-
-        if date_import < today:
-            print("Дата поставки меньше текущей!")
-            return False
-        else:
-            return True
-    
-    def check_date_import(self):
+        file_data.close()
+            
+    def check_date_import_list(self):
         """
         If the expiration in list date has expired, then the product is removed
         :return: GoodInfoList with removing goods
@@ -260,7 +255,7 @@ class GoodInfoList:
         list_of_removing_goods = GoodInfoList()
 
         for good in self.list_with_goods:
-            if self.__check_shell_life_good(good.date_import, good.shelf_life):
+            if GoodInfo.check_shell_life_good(good.date_import, good.shelf_life):
                 list_of_removing_goods.add(good.name, good.price, good.amount, 
                                            good.date_import, good.shelf_life)
                 self.remove(good.name)
