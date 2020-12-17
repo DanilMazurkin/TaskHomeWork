@@ -135,6 +135,7 @@ class GoodInfo:
         else:
             return False
 
+
 class GoodInfoList:
     """
     Represents good info
@@ -416,7 +417,7 @@ class GoodInfoList:
 
         for good in self.list_with_goods:
             total_price += good.price
-            amount_product += good.amount
+            amount_product += 1
             
         mean = total_price / amount_product
         
