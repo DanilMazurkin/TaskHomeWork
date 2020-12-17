@@ -241,16 +241,23 @@ class GoodInfoList:
                 print("Следующая строка не была обработана: ", product)
                 continue
 
-            if GoodInfo.check_product_data(product_data[0], product_data[1], 
-                                           product_data[2], product_data[3], product_data[4]):
+            if GoodInfo.check_product_data(product_data[0], 
+                                           product_data[1], 
+                                           product_data[2], 
+                                           product_data[3], 
+                                           product_data[4]):
 
                 name_product = product_data[0]
                 price_product = int(product_data[1])
                 product_amount = int(product_data[2])
                 product_date =  datetime.strptime(product_data[3], "%Y-%m-%d")
                 shelf_life = int(product_data[4])
-                self.add(GoodInfo(name_product, price_product, product_amount, 
-                                  product_date, shelf_life))
+                
+                self.add(GoodInfo(name_product, 
+                                  price_product, 
+                                  product_amount, 
+                                  product_date, 
+                                  shelf_life))
             else:
                 print("Следующая строка не была обработана: ", product)
 
@@ -267,8 +274,12 @@ class GoodInfoList:
 
         for good in self.list_with_goods:
             if GoodInfo.check_shell_life_good(good.date_import, good.shelf_life):
-                list_of_removing_goods.add(GoodInfo(good.name, good.price, good.amount, 
-                                                    good.date_import, good.shelf_life))
+
+                list_of_removing_goods.add(GoodInfo(good.name, 
+                                                    good.price, 
+                                                    good.amount, 
+                                                    good.date_import, 
+                                                    good.shelf_life))
                 self.remove(good.name)
     
         return list_of_removing_goods
