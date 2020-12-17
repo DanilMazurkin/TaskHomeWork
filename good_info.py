@@ -58,30 +58,42 @@ class GoodInfo:
         )
 
     @staticmethod
-    def check_product_data(good_data):
+    def check_product_data(name, price, amount, date_import, shelf_life):
         """
         Check format data product from list with products
-        :param good_data: list with data about product
-        :type good_data: list
+        :param name: name good
+        :type name: string
+        :param price: price good
+        :type price: integer
+        :param price: price good
+        :type price: string
+        :param amount: amount good
+        :type amount: string
+        :param date_import: string with date
+        :type date_import: string
+        :param shelf_life: shelf life good
+        :type shelf_life: string
         :return: Return True if format right else return
         false if format not right
         :rtype: Return bool value
         """
-
-        if len(good_data) != 5:
+        
+        if name == "":
             return False
 
-        if  (len(good_data[0]) == 0 and 
-            len(good_data[1]) == 0 and len(good_data[2]) == 0):
+        if (not price.isdigit() and not amount.isdigit() and 
+            not shelf_life.isdigit()):
             return False
         
-        good_data[2] = good_data[2].replace('\n', '')
+        shelf_life = int(shelf_life)
+        price = int(price)
+        amount = int(amount)
 
-        if (good_data[1].isdigit() and good_data[2].isdigit() 
-            and GoodInfo.__check_date(good_data[3])):
+        if (shelf_life > 0 and price > 0 
+            and amount > 0 and GoodInfo.__check_date(date_import)):
             return True
-        else:
-            return False
+        
+        return False
 
     @staticmethod
     def __check_date(good_date):
@@ -202,22 +214,14 @@ class GoodInfoList:
 
         return sqrt(dispersion)
         
-    def add(self, name, price, amount, date_import, shelf_life):
+    def add(self, good_info):
         """"
-        :param name: Name Good
-        :param price: Price good
-        :param amount: amount good
-        :param date_import: date import product 
-        :param shelf_life: shelf_life product
-        :type name: string
-        :type price: Number
-        :type amount: Number
-        :type date_import: datetime
-        :type shelf_life: Number
+        Add GoodInfo in GoodInfoList
+        :param good_info: object GoodInfo
+        :type good_info: GoodInfo
         :return: function nothing return
         """
-        self.list_with_goods.append(GoodInfo(name, price, amount, 
-                                            date_import, shelf_life))
+        self.list_with_goods.append(good_info)
 
     def get_from_file(self, filename):
         """
@@ -231,15 +235,21 @@ class GoodInfoList:
 
         for product in list_from_file:
             product_data = product.split(":")
+            
+            if len(product_data) != 5:
+                print("Следующая строка не была обработана: ", product)
+                continue
 
-            if GoodInfo.check_product_data(product_data):
+            if GoodInfo.check_product_data(product_data[0], product_data[1], 
+                                           product_data[2], product_data[3], product_data[4]):
+
                 name_product = product_data[0]
                 price_product = int(product_data[1])
                 product_amount = int(product_data[2])
                 product_date =  datetime.strptime(product_data[3], "%Y-%m-%d")
                 shelf_life = int(product_data[4])
-                self.add(name_product, price_product, product_amount, 
-                        product_date, shelf_life)
+                self.add(GoodInfo(name_product, price_product, product_amount, 
+                                  product_date, shelf_life))
             else:
                 print("Следующая строка не была обработана: ", product)
 
@@ -256,8 +266,8 @@ class GoodInfoList:
 
         for good in self.list_with_goods:
             if GoodInfo.check_shell_life_good(good.date_import, good.shelf_life):
-                list_of_removing_goods.add(good.name, good.price, good.amount, 
-                                           good.date_import, good.shelf_life)
+                list_of_removing_goods.add(GoodInfo(good.name, good.price, good.amount, 
+                                                    good.date_import, good.shelf_life))
                 self.remove(good.name)
     
         return list_of_removing_goods
@@ -377,10 +387,11 @@ class GoodInfoList:
         
         list_of_goods = GoodInfoList()
 
+        print("Цена первого объекта", self.list_with_goods[0].price)
         for good in self.list_with_goods:
             if good.name == name:
-                list_of_goods.add(good.name, good.price, good.amount, 
-                                  good.date_import, good.shelf_life)
+                list_of_goods.add(GoodInfo(good.name, good.price, good.amount, 
+                                           good.date_import, good.shelf_life))
         
         if len(list_of_goods) == 0:
             raise KeyError
