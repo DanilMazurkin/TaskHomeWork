@@ -61,18 +61,25 @@ class GoodInfo:
     def check_product_data(name, price, amount, date_import, shelf_life):
         """
         Check format data product from list with products
+        
         :param name: name good
         :type name: string
+
         :param price: price good
         :type price: integer
+        
         :param price: price good
         :type price: string
+        
         :param amount: amount good
         :type amount: string
+        
         :param date_import: string with date
         :type date_import: string
+        
         :param shelf_life: shelf life good
         :type shelf_life: string
+        
         :return: Return True if format right else return
         false if format not right
         :rtype: Return bool value
