@@ -1,6 +1,9 @@
 import good_info
 
 def main():
+    """
+    Main function with entry point
+    """
     info_list = good_info.GoodInfoList()
     info_list.get_from_file("goods2.info")
     access_by_name = info_list["сушки 1кг."]
