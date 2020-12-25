@@ -29,7 +29,7 @@ class FileUser:
         self.path_to_file = ''
         self.file_data = None
 
-    def select_file(self):
+    def select_path_file(self):
         """
         Function input path to file with goods
         :return: if file exists return list from file
@@ -88,6 +88,3 @@ class FileUser:
 
         self.file_data.close()
         
-    
-
-

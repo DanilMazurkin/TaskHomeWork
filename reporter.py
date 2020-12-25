@@ -10,7 +10,7 @@ def main():
 
     info_list = good_info.GoodInfoList()
     fileuser = FileUser()
-    file_data = fileuser.select_file()
+    file_data = fileuser.select_path_file()
     info_list.get_from_file(file_data)
     fileuser.save_by_directory()
 
