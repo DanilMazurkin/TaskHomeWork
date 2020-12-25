@@ -184,7 +184,7 @@ class GoodInfoList:
         :return: string represents GoodInfo
         :rtype: string
         """
-
+        
         string_with_list = ""
 
         for elem in self.list_with_goods:
@@ -209,8 +209,7 @@ class GoodInfoList:
         :return: Nothing return
         """
 
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция remove_last")
 
         index_last_good = len(self.list_with_goods) - 1
@@ -225,8 +224,7 @@ class GoodInfoList:
         :rtype: float
         """
 
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция get_std")
 
         value_info = self.get_value_info()
@@ -255,19 +253,22 @@ class GoodInfoList:
         Forms GoodInfoList of goods from file data
         :param list_from_file: data from file
         :type list_from_file: list
-        :return: Function Nothing Return
+        :return: Function return False if list_from_file empty
         """
 
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция get_from_file")
+
+        if len(list_from_file) == 0:
+            logging.error("Пустой список из файла")
+            return False
 
         for product in list_from_file:
             product_data = product.split(":")
             
             if len(product_data) != 5:
-                logging.error("Следующая строка не была обработана: ")
-                logging.error(product)
+                logging.error("Следующая строка не была обработана: {product}".format(
+                              product=product))
                 continue
 
             if GoodInfo.check_product_data(product_data[0], 
@@ -288,8 +289,8 @@ class GoodInfoList:
                                   product_date, 
                                   shelf_life))
             else:
-                logging.error("Следующая строка не была обработана: ")
-                logging.error(product)
+                logging.error("Следующая строка не была обработана: {product}".format(
+                              product=product))
             
     def check_date_import_list(self):
         """
@@ -298,8 +299,7 @@ class GoodInfoList:
         :rtype: GoodInfoList
         """
 
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция check_date_import_list")
 
         list_of_removing_goods = GoodInfoList()
@@ -323,8 +323,7 @@ class GoodInfoList:
         :type name: string
         """
 
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция remove")
 
         for good in self.list_with_goods:
@@ -338,8 +337,7 @@ class GoodInfoList:
         Remove object with maximum price
         """
 
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция remove_expensive")
 
         most_expensive = self.get_list_most_expensive()
@@ -356,8 +354,7 @@ class GoodInfoList:
         :rtype: list
         """
 
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция get_list_most_expensive")
 
         most_expensive_goods = list()
@@ -380,8 +377,7 @@ class GoodInfoList:
         :rtype: list
         """
 
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция get_list_with_cheap_goods")
 
         most_cheapset = list()
@@ -404,8 +400,7 @@ class GoodInfoList:
         :rtype: list
         """
         
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция get_list_ending_goods")
 
         ending_goods = list()
@@ -425,8 +420,7 @@ class GoodInfoList:
         :rtype: list
         """
 
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция sort")
 
         if key == "price":
@@ -457,8 +451,7 @@ class GoodInfoList:
         key, else raise KeyError
         """
         
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция getitem")
 
         list_of_goods = GoodInfoList()
@@ -487,8 +480,7 @@ class GoodInfoList:
         :mean=(float Number)
         """
 
-        logging.info("Имя модуля")
-        logging.info(__name__)
+        logging.info("Функция из модуля {name}".format(name=__name__))
         logging.info("Функция get_value_info")
 
         if len(self.list_with_goods) == 0:

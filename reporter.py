@@ -1,6 +1,7 @@
 import good_info
 import logging
-from fileuser import FileUser
+from work_with_file import Work_with_file
+
 
 def main():
     """
@@ -9,62 +10,62 @@ def main():
     logging.basicConfig(filename="reporter.log", filemode='w', level=logging.INFO)
 
     info_list = good_info.GoodInfoList()
-    fileuser = FileUser()
-    file_data = fileuser.select_path_file()
-    info_list.get_from_file(file_data)
-    fileuser.save_by_directory()
+    work_with_file = Work_with_file()
+    file_data = work_with_file.select_path_file()
+    work_with_file.save_by_directory()
 
+    if len(file_data) > 0:
+        info_list.get_from_file(file_data)
+        
+        access_by_name = info_list["сушки 1кг."]
+        print("Доступ по ключу: ")
+        print(access_by_name)
+        info_list.check_date_import_list()
 
-    access_by_name = info_list["сушки 1кг."]
-    logging.info("Доступ по ключу: ")
-    logging.info(access_by_name)
-    info_list.check_date_import_list()
+        info_list.get_std()
+        print("Стандартное отколнение")
+        print(info_list.get_std())
 
-    info_list.get_std()
-    logging.info("Стандартное отколнение")
-    logging.info(info_list.get_std())
+        info_list.remove_last()
+        print("Количество элементов в списке товаров: ")
+        print(len(info_list))
 
-    info_list.remove_last()
-    logging.info("Количество элементов в списке товаров: ")
-    logging.info(len(info_list))
+        price_sort = info_list.sort("price")
+        print("\nСортировка по цене")
 
-    price_sort = info_list.sort("price")
-    logging.info("\nСортировка по цене")
+        for good in price_sort:
+            print(good)
 
-    for good in price_sort:
-        logging.info(good)
+        info_list.remove_expensive() 
 
-    info_list.remove_expensive() 
+        list_most_expensive = info_list.get_list_most_expensive()
 
-    list_most_expensive = info_list.get_list_most_expensive()
+        print("\nСамые дорогие товары")
 
-    logging.info("\nСамые дорогие товары")
+        for good in list_most_expensive:
+            print(good)
 
-    for good in list_most_expensive:
-        logging.info(good)
+        print("\nСамые дешевые товары")
+        list_most_cheapset = info_list.get_list_with_cheap_goods()
 
-    logging.info("\nСамые дешевые товары")
-    list_most_cheapset = info_list.get_list_with_cheap_goods()
+        for good in list_most_cheapset:
+            print(good)
 
-    for good in list_most_cheapset:
-        logging.info(good)
+        print("\nТовары которые заканчиваются")
+        list_ending_goods = info_list.get_list_ending_goods()
 
-    logging.info("\nТовары которые заканчиваются")
-    list_ending_goods = info_list.get_list_ending_goods()
+        for good in list_ending_goods:
+            print(good)
 
-    for good in list_ending_goods:
-        logging.info(good)
+        info_value = info_list.get_value_info()
 
-    info_value = info_list.get_value_info()
-
-    logging.info("Общее количество товаров:"
-        " {amount} \n".format(amount=info_value['amount']))
-    logging.info("Средняя цена товара: {mean} \n".format(mean=info_value['mean']))
-
-    logging.info("Всего позиций товаров: "
-        " {count} \n".format(count=len(info_list)))
-    logging.info("Все товары: \n")
-    logging.info(info_list)
+        print("Общее количество товаров:"
+            " {amount} \n".format(amount=info_value['amount']))
+        print("Средняя цена товара: {mean} \n".format(mean=info_value['mean']))
+        print("Всего позиций товаров: "
+            " {count} \n".format(count=len(info_list)))
+        print("Все товары: \n")
+        print(info_list)
 
 
 if __name__ == '__main__':
