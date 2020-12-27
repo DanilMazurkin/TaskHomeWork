@@ -1,6 +1,6 @@
-INFO:root:Функция из модуля work_with_file
+INFO:root:Функция из модуля file_goods
 INFO:root:Функция select_file
-INFO:root:Функция из модуля work_with_file
+INFO:root:Функция из модуля file_goods
 INFO:root:Функция save_by_directory
 INFO:root:Функция из модуля good_info
 INFO:root:Функция get_from_file
@@ -57,5 +57,5 @@ INFO:root:Функция get_value_info
 INFO:root:Имя модуля
 INFO:root:good_info
 INFO:root:Функция len
-INFO:root:Функция из модуля work_with_file
+INFO:root:Функция из модуля file_goods
 INFO:root:Функция __del__

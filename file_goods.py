@@ -3,7 +3,7 @@ import shutil
 import logging
 
 
-class Work_with_file:
+class FileGoods:
     """
     Represents file user
 
@@ -16,7 +16,7 @@ class Work_with_file:
 
     __init__()
     select_file()
-    save_by_directory()
+    save_in_directory()
     __check_is_file()
     __check_path_exists()
     __del__()
@@ -58,7 +58,7 @@ class Work_with_file:
             logging.error("It is not file or file not exists")
             return []
     
-    def save_by_directory(self):
+    def save_in_directory(self):
         """
         Function saved filed in directory
         return: function return False if file

@@ -1,6 +1,6 @@
 import good_info
 import logging
-from work_with_file import Work_with_file
+from file_goods import FileGoods
 
 
 def main():
@@ -10,9 +10,9 @@ def main():
     logging.basicConfig(filename="reporter.log", filemode='w', level=logging.INFO)
 
     info_list = good_info.GoodInfoList()
-    work_with_file = Work_with_file()
-    file_data = work_with_file.select_path_file()
-    work_with_file.save_by_directory()
+    file_goods = FileGoods()
+    file_data = file_goods.select_path_file()
+    file_goods.save_in_directory()
 
     if len(file_data) > 0:
         info_list.get_from_file(file_data)
