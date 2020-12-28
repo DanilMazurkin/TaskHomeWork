@@ -1,16 +1,20 @@
 import good_info
 import logging
-from file_goods import FileGoods
+from file_work import FileWork
 
 
 def main():
     """
     Main function with entry point
     """
-    logging.basicConfig(filename="reporter.log", filemode='w', level=logging.INFO)
+
+    FORMAT = '%(asctime)s %(levelname)s %(filename)s - %(funcName)s - %(message)s'
+    
+    logging.basicConfig(filename="reporter.log", filemode='a',
+                        level=logging.INFO, format=FORMAT)
 
     info_list = good_info.GoodInfoList()
-    file_goods = FileGoods()
+    file_goods = FileWork()
     file_data = file_goods.select_path_file()
     file_goods.save_in_directory()
 

@@ -3,9 +3,9 @@ import shutil
 import logging
 
 
-class FileGoods:
+class FileWork:
     """
-    Represents file user
+    Represents work with file
 
     Attributes:
 
@@ -39,13 +39,12 @@ class FileGoods:
         :rtype: list if file exists, empty list else
         """
 
-        logging.info("Функция из модуля {name}".format(name=__name__))
-        logging.info("Функция select_file")        
-
         print("Введите путь до файла с товарами")
         
         self.path_to_file = str(input())
-        self.path_to_file = self.path_to_file.strip("'")
+        self.path_to_file = self.path_to_file.strip(" ' ")
+        self.path_to_file = self.path_to_file.strip(' " ')
+        
         self.path_to_file = os.path.abspath(self.path_to_file)
 
         if  self.__check_is_file() and self.__check_path_exists():
@@ -55,7 +54,7 @@ class FileGoods:
             return list_from_file
         
         else:
-            logging.error("It is not file or file not exists")
+            logging.error("Это не файл или не директории не существует")
             return []
     
     def save_in_directory(self):
@@ -65,9 +64,6 @@ class FileGoods:
         not defined, else return True
         """
 
-        logging.info("Функция из модуля {name}".format(name=__name__))
-        logging.info("Функция save_by_directory")        
-        
         if self.file_data is None:
             print("Невозможно сохранить файл в директорию")
             logging.error("Невозможно сохранить файл в директорию")
@@ -76,10 +72,15 @@ class FileGoods:
         print("В какую директорию сохранить считанный файл?")
         
         name_directory = str(input())
-        name_directory = name_directory.strip("'")
-        
+        name_directory = name_directory.strip(" ' ")
+        name_directory = name_directory.strip(' " ')
+
+        if  (os.path.exists(name_directory) and 
+            FileWork.__check_right_write(name_directory) is not True):
+            return False
+
         if not os.path.exists(name_directory):
-            os.mkdir(name_directory)
+            os.makedirs(name_directory)
             shutil.copy(self.path_to_file, name_directory)
         else:
             name_file = os.path.basename(self.path_to_file)
@@ -122,14 +123,30 @@ class FileGoods:
             print("По указанному пути не существует файла")
             return False
 
+    @staticmethod
+    def __check_right_write(path_directory):
+        """
+        Function check right write in directory
+        :param path_directory: path with directorires
+        :type path_directory: string
+        :return: Function return True if has for write,
+        False else
+        """
+        if os.access(path_directory, os.W_OK):
+            return True
+        else:
+            logging.error("Нет права записывать по пути {path}".format(
+                                                                path=path_directory))
+            print("Нет права записывать по пути {path}".format(
+                                                        path=path_directory))
+            return False
+
     def __del__(self):
         """
-        Function closed file
+        Function remove object and closed file
         """
 
-        logging.info("Функция из модуля {name}".format(name=__name__))
-        logging.info("Функция __del__")    
-
         if self.file_data is not None:
+            logging.info("Удаление объекта FileWork")    
             self.file_data.close()
     
