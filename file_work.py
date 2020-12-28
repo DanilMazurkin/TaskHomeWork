@@ -75,8 +75,11 @@ class FileWork:
         name_directory = name_directory.strip(" ' ")
         name_directory = name_directory.strip(' " ')
 
+        if not FileWork.__check_is_dir(name_directory):
+            return False
+
         if  (os.path.exists(name_directory) and 
-            FileWork.__check_right_write(name_directory) is not True):
+            FileWork.__check_right_write(name_directory)):
             return False
 
         if not os.path.exists(name_directory):
@@ -137,8 +140,22 @@ class FileWork:
         else:
             logging.error("Нет права записывать по пути {path}".format(
                                                                 path=path_directory))
-            print("Нет права записывать по пути {path}".format(
-                                                        path=path_directory))
+            print("Нет права записывать по пути {path}".format(path=path_directory))
+            return False
+
+    @staticmethod
+    def __check_is_dir(path_directory):
+        """
+        Function check path directory
+        :param path_directory: path directory
+        :type path_directory: string
+        :return: if path_directory is dir return True, else Fasle
+        """
+        if os.path.isdir(path_directory):
+            return True
+        else:
+            logging.error("Это не папка, а файл {path}".format(path=path_directory))
+            print("Это не папка, а файл {path}".format(path=path_directory))
             return False
 
     def __del__(self):
