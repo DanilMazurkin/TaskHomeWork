@@ -1,5 +1,6 @@
 from math import sqrt
 from datetime import datetime, timedelta
+from operator import attrgetter
 import logging 
 
 
@@ -98,8 +99,8 @@ class GoodInfo:
         price = int(price)
         amount = int(amount)
 
-        if (shelf_life > 0 and price > 0 
-            and amount > 0 and GoodInfo.__check_date(date_import)):
+        if (shelf_life > 0 and price > 0 and 
+            GoodInfo.__check_date(date_import)):
             return True
         
         return False
@@ -262,7 +263,7 @@ class GoodInfoList:
             product_data = product.split(":")
             
             if len(product_data) != 5:
-                logging.error("Следующая строка не была обработана: {product}".format(
+                logging.error("Следующая строка не была обработана1: {product}".format(
                               product=product))
                 continue
 
@@ -286,7 +287,7 @@ class GoodInfoList:
                                   shelf_life, 
                                   date_manufacture))
             else:
-                logging.error("Следующая строка не была обработана: {product}".format(
+                logging.error("Следующая строка не была обработана2: {product}".format(
                               product=product))
             
     def check_date_manafucture_list(self):
@@ -448,8 +449,11 @@ class GoodInfoList:
 
         for good in self.list_with_goods:
             if good.name == name:
-                list_of_goods.add(GoodInfo(good.name, good.price, good.amount, 
-                                           good.date_import, good.shelf_life,
+                list_of_goods.add(GoodInfo(good.name, 
+                                           good.price, 
+                                           good.amount, 
+                                           good.date_import, 
+                                           good.shelf_life,
                                            good.date_manufacture))
         
         if len(list_of_goods) == 0:
@@ -487,6 +491,9 @@ class GoodInfoList:
 
         return {'amount': amount_product, 'mean': mean}
 
+    def __iter__(self):
+        return iter(self.list_with_goods)
+
     def product_buy(self, name, amount):
         """
         Function allows you to buy a product
@@ -496,5 +503,48 @@ class GoodInfoList:
         :type amount: integer
         :return: nothing return
         """
-
         
+        goods_find_list = GoodInfoList()
+
+        for good in self.list_with_goods:
+            if good.name == name:
+                goods_find_list.add(GoodInfo(good.name, 
+                                            good.price, 
+                                            good.amount, 
+                                            good.date_import, 
+                                            good.shelf_life,
+                                            good.date_manufacture))
+
+        availability = all(good.amount > 0 for good in goods_find_list)
+
+        if availability is False:
+            logging.info("Товар закончился ({product}) "
+                        "(выручка - None)".format(product=name))
+            return False
+        
+        total_amount = sum([good.amount for good in goods_find_list])
+
+        if total_amount < amount:
+            logging.info("Количество запрашиваемых товаров больше "
+                        "чем имеется в наличии (выручка - None)")
+            return False
+        
+        if len(goods_find_list) > 1:
+            
+            min_date = min([good.date_manufacture for good in goods_find_list
+                            if good.amount > amount
+                            ])
+            earnings = 0
+
+            for good in goods_find_list:
+                if good.date_manufacture == min_date:
+                    good.amount -= amount
+                    earnings = amount * good.price
+            
+            return earnings
+        
+        elif len(goods_find_list) == 1:
+            good = goods_find_list.list_with_goods[0]
+            earnings = amount * good.price
+            
+            return earnings

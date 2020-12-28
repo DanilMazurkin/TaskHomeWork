@@ -21,55 +21,54 @@ def main():
     if len(file_data) > 0:
         info_list.get_from_file(file_data)
         
-        access_by_name = info_list["сушки 1кг."]
-        print("Доступ по ключу: ")
-        print(access_by_name)
+        
         info_list.check_date_manafucture_list()
 
         info_list.get_std()
         print("Стандартное отколнение")
         print(info_list.get_std())
+        earnings = info_list.product_buy("макароны Макфа,рожки", 5)
+        print("Выручка {earnings}".format(earnings=earnings))
+        # info_list.remove_last()
+        # print("Количество элементов в списке товаров: ")
+        # print(len(info_list))
 
-        info_list.remove_last()
-        print("Количество элементов в списке товаров: ")
-        print(len(info_list))
+        # price_sort = info_list.sort("price")
+        # print("\nСортировка по цене")
 
-        price_sort = info_list.sort("price")
-        print("\nСортировка по цене")
+        # for good in price_sort:
+        #     print(good)
 
-        for good in price_sort:
-            print(good)
+        # info_list.remove_expensive() 
 
-        info_list.remove_expensive() 
+        # list_most_expensive = info_list.get_list_most_expensive()
 
-        list_most_expensive = info_list.get_list_most_expensive()
+        # print("\nСамые дорогие товары")
 
-        print("\nСамые дорогие товары")
+        # for good in list_most_expensive:
+        #     print(good)
 
-        for good in list_most_expensive:
-            print(good)
+        # print("\nСамые дешевые товары")
+        # list_most_cheapset = info_list.get_list_with_cheap_goods()
 
-        print("\nСамые дешевые товары")
-        list_most_cheapset = info_list.get_list_with_cheap_goods()
+        # for good in list_most_cheapset:
+        #     print(good)
 
-        for good in list_most_cheapset:
-            print(good)
+        # print("\nТовары которые заканчиваются")
+        # list_ending_goods = info_list.get_list_ending_goods()
 
-        print("\nТовары которые заканчиваются")
-        list_ending_goods = info_list.get_list_ending_goods()
+        # for good in list_ending_goods:
+        #     print(good)
 
-        for good in list_ending_goods:
-            print(good)
+        # info_value = info_list.get_value_info()
 
-        info_value = info_list.get_value_info()
-
-        print("Общее количество товаров:"
-            " {amount} \n".format(amount=info_value['amount']))
-        print("Средняя цена товара: {mean} \n".format(mean=info_value['mean']))
-        print("Всего позиций товаров: "
-            " {count} \n".format(count=len(info_list)))
-        print("Все товары: \n")
-        print(info_list)
+        # print("Общее количество товаров:"
+        #     " {amount} \n".format(amount=info_value['amount']))
+        # print("Средняя цена товара: {mean} \n".format(mean=info_value['mean']))
+        # print("Всего позиций товаров: "
+        #     " {count} \n".format(count=len(info_list)))
+        # print("Все товары: \n")
+        # print(info_list)
 
 
 if __name__ == '__main__':
