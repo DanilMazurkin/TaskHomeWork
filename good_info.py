@@ -22,7 +22,7 @@ class GoodInfo:
 
     """
 
-    def __init__(self, name, price, amount, date_import, shelf_life):
+    def __init__(self, name, price, amount, date_import, shelf_life, manufacture):
         """
         Initialize name, price, amount, date_import, shellf_life
 
@@ -42,6 +42,7 @@ class GoodInfo:
         self.amount = amount
         self.date_import = date_import
         self.shelf_life = shelf_life
+        self.date_manufacture = manufacture
 
     def __str__(self):
         """
@@ -276,17 +277,19 @@ class GoodInfoList:
                 product_amount = int(product_data[2])
                 product_date =  datetime.strptime(product_data[3], "%Y-%m-%d")
                 shelf_life = int(product_data[4])
-                
+                date_manufacture = datetime.strptime(product_data[3], "%Y-%m-%d")
+
                 self.add(GoodInfo(name_product, 
                                   price_product, 
                                   product_amount, 
                                   product_date, 
-                                  shelf_life))
+                                  shelf_life, 
+                                  date_manufacture))
             else:
                 logging.error("Следующая строка не была обработана: {product}".format(
                               product=product))
             
-    def check_date_import_list(self):
+    def check_date_manafucture_list(self):
         """
         If the expiration in list date has expired, then the product is removed
         :return: GoodInfoList with removing goods
@@ -298,13 +301,15 @@ class GoodInfoList:
         list_of_removing_goods = GoodInfoList()
 
         for good in self.list_with_goods:
-            if GoodInfo.check_shell_life_good(good.date_import, good.shelf_life):
+            if GoodInfo.check_shell_life_good(good.date_manufacture, 
+                                              good.shelf_life):
 
                 list_of_removing_goods.add(GoodInfo(good.name, 
                                                     good.price, 
                                                     good.amount, 
                                                     good.date_import, 
-                                                    good.shelf_life))
+                                                    good.shelf_life,
+                                                    good.date_manufucture))
                 self.remove(good.name)
     
         return list_of_removing_goods
@@ -444,7 +449,8 @@ class GoodInfoList:
         for good in self.list_with_goods:
             if good.name == name:
                 list_of_goods.add(GoodInfo(good.name, good.price, good.amount, 
-                                           good.date_import, good.shelf_life))
+                                           good.date_import, good.shelf_life,
+                                           good.date_manufacture))
         
         if len(list_of_goods) == 0:
             raise KeyError
@@ -480,3 +486,15 @@ class GoodInfoList:
 
 
         return {'amount': amount_product, 'mean': mean}
+
+    def product_buy(self, name, amount):
+        """
+        Function allows you to buy a product
+        :param name: name good
+        :type name: string
+        :param amount: amount goods
+        :type amount: integer
+        :return: nothing return
+        """
+
+        

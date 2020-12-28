@@ -75,7 +75,9 @@ class FileWork:
         name_directory = name_directory.strip(" ' ")
         name_directory = name_directory.strip(' " ')
 
-        if not FileWork.__check_is_dir(name_directory):
+        if os.path.isfile(name_directory):
+            logging.error("Вы указали файл, а не папку")
+            print("Вы указали файл, а не папку")
             return False
 
         if  (os.path.exists(name_directory) and 
@@ -141,21 +143,6 @@ class FileWork:
             logging.error("Нет права записывать по пути {path}".format(
                                                                 path=path_directory))
             print("Нет права записывать по пути {path}".format(path=path_directory))
-            return False
-
-    @staticmethod
-    def __check_is_dir(path_directory):
-        """
-        Function check path directory
-        :param path_directory: path directory
-        :type path_directory: string
-        :return: if path_directory is dir return True, else Fasle
-        """
-        if os.path.isdir(path_directory):
-            return True
-        else:
-            logging.error("Это не папка, а файл {path}".format(path=path_directory))
-            print("Это не папка, а файл {path}".format(path=path_directory))
             return False
 
     def __del__(self):

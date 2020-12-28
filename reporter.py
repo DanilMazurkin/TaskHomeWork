@@ -24,7 +24,7 @@ def main():
         access_by_name = info_list["сушки 1кг."]
         print("Доступ по ключу: ")
         print(access_by_name)
-        info_list.check_date_import_list()
+        info_list.check_date_manafucture_list()
 
         info_list.get_std()
         print("Стандартное отколнение")
