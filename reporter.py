@@ -16,22 +16,29 @@ def main():
     info_list = good_info.GoodInfoList()
     file_goods = FileWork()
     file_data = file_goods.select_path_file()
+
     file_goods.save_in_directory()
 
     if len(file_data) > 0:
         info_list.get_from_file(file_data)
+        info_value = info_list.get_value_info()
+        print("Количество товаров: {amount} \n".format(amount=info_value['amount']))
         
-        
-        info_list.check_date_manafucture_list()
+        info_value = info_list.get_value_info()
 
-        info_list.get_std()
+        print("Средняя цена товара: {mean} \n".format(mean=info_value['mean']))
+        print("Количество товаров: {amount} \n".format(amount=info_value['amount']))
+        print("Количество элементов в списке товаров: ")
         print("Стандартное отколнение")
         print(info_list.get_std())
-        earnings = info_list.product_buy("макароны Макфа,рожки", 5)
-        print("Выручка {earnings}".format(earnings=earnings))
+        print(len(info_list))
         # info_list.remove_last()
-        # print("Количество элементов в списке товаров: ")
-        # print(len(info_list))
+
+
+        # info_list.product_buy("соль 1 кг", 5)
+    
+        # info_list.check_date_manafucture_list()
+        # info_value = info_list.get_value_info()
 
         # price_sort = info_list.sort("price")
         # print("\nСортировка по цене")
@@ -59,17 +66,6 @@ def main():
 
         # for good in list_ending_goods:
         #     print(good)
-
-        # info_value = info_list.get_value_info()
-
-        # print("Общее количество товаров:"
-        #     " {amount} \n".format(amount=info_value['amount']))
-        # print("Средняя цена товара: {mean} \n".format(mean=info_value['mean']))
-        # print("Всего позиций товаров: "
-        #     " {count} \n".format(count=len(info_list)))
-        # print("Все товары: \n")
-        # print(info_list)
-
 
 if __name__ == '__main__':
     main()

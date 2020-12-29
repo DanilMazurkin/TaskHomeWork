@@ -88,6 +88,10 @@ class GoodInfo:
         :rtype: Return bool value
         """
         
+        price = str(price)
+        amount = str(amount)
+        shelf_life = str(shelf_life)
+
         if name == "":
             return False
 
@@ -100,7 +104,7 @@ class GoodInfo:
         amount = int(amount)
 
         if (shelf_life > 0 and price > 0 and 
-            GoodInfo.__check_date(date_import)):
+            amount >= 0 and GoodInfo.__check_date(date_import)):
             return True
         
         return False
@@ -136,12 +140,13 @@ class GoodInfo:
         :return: return true if shelf life end and return
         False if shelf life not end
         """
-
+        
         shelf_life = timedelta(days=int(shelf_life))
+        good_date =  datetime.strptime(good_date, "%Y-%m-%d")
         ending_shelf_life = good_date + shelf_life
         today = datetime.today()
 
-        if today > ending_shelf_life:
+        if today < ending_shelf_life:
             return True
         else:
             return False
@@ -243,14 +248,33 @@ class GoodInfoList:
         :type good_info: GoodInfo
         :return: function nothing return
         """
-        self.list_with_goods.append(good_info)
+
+        if (GoodInfo.check_product_data(good_info.name, 
+                                       good_info.price, 
+                                       good_info.amount, 
+                                       good_info.date_import, 
+                                       good_info.shelf_life) and
+            
+            GoodInfo.check_shell_life_good(good_info.date_manufacture, 
+                                           good_info.shelf_life)):
+
+            good_info.price = int(good_info.price)
+            good_info.amount = int(good_info.amount)
+            good_info.shelf_life = int(good_info.shelf_life)
+            self.list_with_goods.append(good_info)
+
+            return True
+        else:
+            logging.error("Следующая строка не была обработана: {good_info}".format(
+                                                                   good_info=good_info))
+            return False
 
     def get_from_file(self, list_from_file):
         """
         Forms GoodInfoList of goods from file data
         :param list_from_file: data from file
         :type list_from_file: list
-        :return: Function return False if list_from_file empty
+        :return: Function return False if list_from_file empty, else True
         """
 
         logging.info("Формирование списка GoodInfoList")
@@ -267,28 +291,21 @@ class GoodInfoList:
                               product=product))
                 continue
 
-            if GoodInfo.check_product_data(product_data[0], 
-                                           product_data[1], 
-                                           product_data[2], 
-                                           product_data[3], 
-                                           product_data[4]):
+            name_product = product_data[0]
+            price_product = product_data[1]
+            product_amount = product_data[2]
+            product_date =  product_data[3]
+            shelf_life = product_data[4]
+            date_manufacture = product_data[3]
 
-                name_product = product_data[0]
-                price_product = int(product_data[1])
-                product_amount = int(product_data[2])
-                product_date =  datetime.strptime(product_data[3], "%Y-%m-%d")
-                shelf_life = int(product_data[4])
-                date_manufacture = datetime.strptime(product_data[3], "%Y-%m-%d")
-
-                self.add(GoodInfo(name_product, 
-                                  price_product, 
-                                  product_amount, 
-                                  product_date, 
-                                  shelf_life, 
-                                  date_manufacture))
-            else:
-                logging.error("Следующая строка не была обработана2: {product}".format(
-                              product=product))
+            self.add(GoodInfo(name_product, 
+                              price_product, 
+                              product_amount, 
+                              product_date, 
+                              shelf_life, 
+                              date_manufacture))
+        
+        return True
             
     def check_date_manafucture_list(self):
         """
@@ -317,9 +334,11 @@ class GoodInfoList:
         
     def remove(self, name):
         """
-        Remove object with name
+        Remove object by name
         :param name: name good
         :type name: string
+        :return True if good was remove and False else
+        :rtype: bool
         """
 
         logging.info("Удаление объекта с именем: {name}".format(name=name))
@@ -328,10 +347,14 @@ class GoodInfoList:
             if good.name == name:
                 logging.info("Удаленный товар: {good}".format(good=good))
                 self.list_with_goods.remove(good)
+                return True
+        
+        return False
 
     def remove_expensive(self):
         """
         Remove object with maximum price
+        :return: return name expensive good
         """
 
         logging.info("Удаление из списка самого дорогого товара")
@@ -342,6 +365,7 @@ class GoodInfoList:
         for good in self.list_with_goods:
             if good.price == max_price:
                 self.list_with_goods.remove(good)
+                return good.name
 
     def get_list_most_expensive(self):
         """
@@ -480,9 +504,9 @@ class GoodInfoList:
 
         for good in self.list_with_goods:
             total_price += good.price
-            amount_product += 1
+            amount_product += good.amount
             
-        mean = total_price / amount_product
+        mean = total_price / len(self.list_with_goods)
         
         logging.info("Количество {amount}, средняя цена {mean}".format(
                                                                 amount=amount_product,
@@ -501,31 +525,39 @@ class GoodInfoList:
         :type name: string
         :param amount: amount goods
         :type amount: integer
-        :return: nothing return
+        :return: Function return False if total amount goods less
+        then amount, function return false if goood end, function
+        return earnings else
+        :rtype: bool if false, else integer
         """
         
         goods_find_list = GoodInfoList()
 
         for good in self.list_with_goods:
             if good.name == name:
-                goods_find_list.add(GoodInfo(good.name, 
-                                            good.price, 
-                                            good.amount, 
-                                            good.date_import, 
-                                            good.shelf_life,
-                                            good.date_manufacture))
+                goods_find_list.add(good)
 
-        availability = all(good.amount > 0 for good in goods_find_list)
+        if len(goods_find_list) == 0:
+            logging.info("Нет товара с именем {name}".format(name=name))
+            print("Нет товара с именем {name}".format(name=name))
+            return False
+
+        availability = any(good.amount > 0 for good in goods_find_list)
 
         if availability is False:
             logging.info("Товар закончился ({product}) "
                         "(выручка - None)".format(product=name))
+            print("Товар закончился ({product}) "
+                        "(выручка - None)".format(product=name))
             return False
         
+
         total_amount = sum([good.amount for good in goods_find_list])
 
-        if total_amount < amount:
+        if len(goods_find_list) == 1 and total_amount < amount:
             logging.info("Количество запрашиваемых товаров больше "
+                        "чем имеется в наличии (выручка - None)")
+            print("Количество запрашиваемых товаров больше "
                         "чем имеется в наличии (выручка - None)")
             return False
         
