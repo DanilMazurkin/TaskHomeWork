@@ -88,14 +88,14 @@ class GoodInfoListTest(unittest.TestCase):
 
         self.assertFalse(check_product_data)
 
-    def test_add_with_not_right_shelf_life(self):
+    def test_add_with_not_right_shell_life(self):
 
         good = GoodInfo("яйцо 1 кат.", "-30", "40", "2020-12-30", "-14", "2020-12-30")
         check_product_data = info_list.add(good)
 
         self.assertFalse(check_product_data)
 
-    def test_add_with_end_shelf_life(self):
+    def test_add_with_end_shell_life(self):
 
         good = GoodInfo("яйцо 1 кат.", "-30", "40", "2020-12-1", "3", "2020-12-1")
         check_product_data = info_list.add(good)
