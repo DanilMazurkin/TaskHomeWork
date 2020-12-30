@@ -426,7 +426,8 @@ class GoodInfoList:
                     object_self.price == object_other.price and
                     object_self.amount == object_other.amount and
                     object_self.shelf_life == object_other.shelf_life and
-                    object_self.date_import == object_other.date_import):
+                    object_self.date_import == object_other.date_import and
+                    object_self.date_manufacture == object_other.date_manufacture):
                     
                     return True
                 else:
