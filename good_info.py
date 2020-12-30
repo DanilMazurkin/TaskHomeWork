@@ -60,6 +60,21 @@ class GoodInfo:
                 shelf_life=self.shelf_life
         )
 
+    def __repr__(self):
+        """
+        Function make string for represents develop good
+        :return: string represents good
+        :rtype: string
+        """
+        return  ("GoodInfo('{name}', '{price}', '{amount}',"
+                 "'{date}', '{shelf}', '{date}'),\n").format(
+                name=self.name,
+                price=self.price,
+                amount=self.amount,
+                shelf=self.shelf_life,
+                date=self.date_import
+        )
+
     @staticmethod
     def check_product_data(name, price, amount, date_import, shelf_life):
         """
@@ -123,7 +138,7 @@ class GoodInfo:
         date_import =  datetime.strptime(good_date, "%Y-%m-%d")
         today = datetime.today()
 
-        if date_import < today:
+        if date_import > today:
             logging.error("Дата поставки меньше текущей!")
             return False
         else:
@@ -198,6 +213,20 @@ class GoodInfoList:
             string_with_list += str(elem) + '\n'
 
         return string_with_list
+    
+    def __repr__(self):
+        """
+        Function make string with represents GoodInfoList
+        :return: string represents GoodInfo
+        :rtype: string
+        """
+
+        list_with_goods_strings = ""
+
+        for elem in self.list_with_goods:
+            list_with_goods_strings += repr(elem)
+
+        return list_with_goods_strings
 
     def __len__(self):
         """
@@ -327,7 +356,7 @@ class GoodInfoList:
                                                     good.amount, 
                                                     good.date_import, 
                                                     good.shelf_life,
-                                                    good.date_manufucture))
+                                                    good.date_manufacture))
                 self.remove(good.name)
     
         return list_of_removing_goods
@@ -358,12 +387,13 @@ class GoodInfoList:
         """
 
         logging.info("Удаление из списка самого дорогого товара")
+        print("Удаление из списка самого дорогого товара")
 
         most_expensive = self.get_list_most_expensive()
-        max_price = most_expensive[0].price
+        expensive_good = most_expensive[0]
 
         for good in self.list_with_goods:
-            if good.price == max_price:
+            if good.price == expensive_good.price:
                 self.list_with_goods.remove(good)
                 return good.name
 
@@ -376,7 +406,7 @@ class GoodInfoList:
 
         logging.info("Получение списка с самыми дорогими товарами")
 
-        most_expensive_goods = list()
+        most_expensive_goods = GoodInfoList()
         max_price = 0
 
         for good in self.list_with_goods:
@@ -385,9 +415,23 @@ class GoodInfoList:
 
         for good in self.list_with_goods:
             if good.price == max_price:
-                most_expensive_goods.append(good)
+                most_expensive_goods.add(good)
 
         return most_expensive_goods
+    
+    def __eq__(self, other):
+        if isinstance(other, GoodInfoList):
+            for object_self, object_other in zip(self.list_with_goods, other.list_with_goods):
+                if (object_self.name == object_other.name and
+                    object_self.price == object_other.price and
+                    object_self.amount == object_other.amount and
+                    object_self.shelf_life == object_other.shelf_life and
+                    object_self.date_import == object_other.date_import):
+                    
+                    return True
+                else:
+                    return False
+
 
     def get_list_with_cheap_goods(self):
         """
@@ -398,7 +442,7 @@ class GoodInfoList:
 
         logging.info("Получение списка с самыми дешевыми товарами")
 
-        most_cheapset = list()
+        most_cheapset = GoodInfoList()
         min_price = 9999
 
         for good in self.list_with_goods:
@@ -407,7 +451,7 @@ class GoodInfoList:
         
         for good in self.list_with_goods:
             if good.price == min_price:
-                most_cheapset.append(good)
+                most_cheapset.add(good)
         
         return most_cheapset
 
@@ -420,11 +464,11 @@ class GoodInfoList:
         
         logging.info("Получение списка с заканчивающимися товарами")
 
-        ending_goods = list()
+        ending_goods = GoodInfoList()
 
         for good in self.list_with_goods:
             if good.amount < 5:
-                ending_goods.append(good)
+                ending_goods.add(good)
         
         return ending_goods
 
@@ -434,26 +478,39 @@ class GoodInfoList:
         :param key: name field by which need sort
         :type key: string
         :return: sorted list with goods
-        :rtype: list
+        :rtype: GoodInfoList
         """
 
         logging.info("Сортировка по ключу {key}".format(key=key))
+        sort_list_by_key = GoodInfoList()
 
         if key == "price":
             sort_list = sorted(
                                 self.list_with_goods,
                                 key=lambda good: good.price)
-            return sort_list
+
+            for good in sort_list:
+                sort_list_by_key.add(good)
+
+            return sort_list_by_key
         elif key == "amount":
             sort_list = sorted(
                                 self.list_with_goods,
                                 key=lambda good: good.amount)
-            return sort_list
+
+            for good in sort_list:
+                sort_list_by_key.add(good)
+
+            return sort_list_by_key
         elif key == "name":
             sort_list = sorted(
                                 self.list_with_goods,
                                 key=lambda good: good.name)
-            return sort_list
+
+            for good in sort_list:
+                sort_list_by_key.add(good)
+            
+            return sort_list_by_key
         else:
             raise AttributeError
 
@@ -467,23 +524,28 @@ class GoodInfoList:
         key, else raise KeyError
         """
         
+        name = str(name)
         logging.info("Получение из GoodInfoList по ключу {key}".format(key=name))
 
-        list_of_goods = GoodInfoList()
+        if not name.isdigit():
+            list_of_goods = GoodInfoList()
 
-        for good in self.list_with_goods:
-            if good.name == name:
-                list_of_goods.add(GoodInfo(good.name, 
-                                           good.price, 
-                                           good.amount, 
-                                           good.date_import, 
-                                           good.shelf_life,
-                                           good.date_manufacture))
-        
-        if len(list_of_goods) == 0:
-            raise KeyError
+            for good in self.list_with_goods:
+                if good.name == name:
+                    list_of_goods.add(GoodInfo(good.name, 
+                                            good.price, 
+                                            good.amount, 
+                                            good.date_import, 
+                                            good.shelf_life,
+                                            good.date_manufacture))
+            
+            if len(list_of_goods) == 0:
+                raise KeyError
+            else:
+                return list_of_goods
         else:
-            return list_of_goods
+            name = int(name)
+            return self.list_with_goods[name]
 
     def get_value_info(self): 
         """ 

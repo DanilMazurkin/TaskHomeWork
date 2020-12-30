@@ -31,17 +31,22 @@ class FileWork:
         self.path_to_file = ''
         self.file_data = None
 
-    def select_path_file(self):
+    def select_path_file(self, mode="user"):
         """
         Function input path to file with goods
+        :param mode: default "user", use for input path,
+        mode="test" use for unittest
         :return: if file exists return list from file
         else function return false
         :rtype: list if file exists, empty list else
         """
-
-        print("Введите путь до файла с товарами")
         
-        self.path_to_file = str(input())
+        if mode == "user":
+            print("Введите путь до файла с товарами")
+            self.path_to_file = str(input())
+        elif mode == "test":
+            self.path_to_file = "goods2.info"
+
         self.path_to_file = self.path_to_file.strip(" ' ")
         self.path_to_file = self.path_to_file.strip(' " ')
         
