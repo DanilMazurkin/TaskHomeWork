@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import create_engine, String,  \
     MetaData, Table, Column, Integer, ForeignKey, Date, update, insert
 from sqlalchemy.orm import relationship
@@ -36,10 +37,10 @@ class Database:
         engine, session
         """
         
-        self.DB_NAME = 'learn_db_test'
+        self.DB_NAME = 'TestAndLearning'
         self.HOST_NAME = '127.0.0.1'
         self.USER_NAME = 'postgres'
-        self.PASS = 'ohshitbegi2019'
+        self.PASS = os.environ.get('CONPASS')
         self.metadata = None
         self.engine = self.__get_engine()
         self.session = Session(bind=self.engine)
