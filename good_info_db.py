@@ -261,7 +261,6 @@ class GoodInfoListDB:
             self.session.commit()
 
             return earnings
-        
 
     def add(self, good_info):
         """"

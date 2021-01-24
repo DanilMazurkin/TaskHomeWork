@@ -24,7 +24,7 @@ def main():
     file_goods.save_in_directory()
 
     if len(file_data) > 0:
-        # info_list.get_from_file(file_data)
+        info_list.get_from_file(file_data)
         info_list.remove("морковь 1кг")
         info_list.remove_expensive()
         deviation = info_list.get_std()
