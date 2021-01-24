@@ -66,7 +66,6 @@ class GoodInfoListDB:
         from table goods in database
         """
         count_goods = self.session.query(func.count(Good.id)).scalar()
-        self.session.commit()
         
         self.session.query(Good).filter(Good.id == count_goods).\
                     delete(synchronize_session='evaluate')            
@@ -81,7 +80,6 @@ class GoodInfoListDB:
         """
 
         price_goods = self.session.query(Good.price)
-        self.session.commit()
         
         n = self.session.query(func.count(Good.id)).scalar()
 
@@ -123,7 +121,6 @@ class GoodInfoListDB:
 
         goods_expensive = self.session.query(Good).filter(
                                                 Good.price == max_price_db)
-        self.session.commit()
 
         return goods_expensive
 
@@ -138,7 +135,6 @@ class GoodInfoListDB:
 
         cheaps_goods = self.session.query(Good).filter(
                                                 Good.price == min_price_db)
-        self.session.commit()
 
         return cheaps_goods
     
@@ -153,23 +149,18 @@ class GoodInfoListDB:
 
         if name == "price":
             order_by_price = self.session.query(Good).\
-                                            order_by(Good.price)
-            self.session.commit()
-            
+                                            order_by(Good.price)            
             return order_by_price
         
         elif name == "amount":
             order_by_amount = self.session.query(Good).\
                                             order_by(Good.amount)
-            self.session.commit()
 
             return order_by_amount
 
         elif name == "name":
             order_by_name = self.session.query(Good).\
                                         order_by(Good.name)
-            self.session.commit()
-
             return order_by_name
 
         else:

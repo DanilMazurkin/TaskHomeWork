@@ -13067,3 +13067,5 @@ CREATE TABLE goods (
 2021-01-24 12:49:42,954 ERROR file_work.py - __check_is_file - По указанному пути нет файла
 2021-01-24 12:49:42,955 ERROR file_work.py - select_path_file - Это не файл или не директории не существует
 2021-01-24 12:49:42,955 ERROR file_work.py - save_in_directory - Невозможно сохранить файл в директорию
+2021-01-24 22:48:12,141 INFO file_work.py - __del__ - Удаление объекта FileWork
+2021-01-24 22:50:49,728 INFO file_work.py - __del__ - Удаление объекта FileWork
