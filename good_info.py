@@ -2,7 +2,9 @@ from math import sqrt
 from datetime import datetime, timedelta
 from operator import attrgetter
 import logging 
-
+from database import Database
+from db_models import Good, Provider, Delivery, Shelf
+from sqlalchemy import func
 
 class GoodInfo:
     """
@@ -272,7 +274,7 @@ class GoodInfoList:
         
     def add(self, good_info):
         """"
-        Add GoodInfo in GoodInfoList
+        Add GoodInfo in GoodInfoList and Database
         :param good_info: object GoodInfo
         :type good_info: GoodInfo
         :return: function nothing return
@@ -287,9 +289,7 @@ class GoodInfoList:
             GoodInfo.check_shell_life_good(good_info.date_manufacture, 
                                            good_info.shelf_life)):
 
-            good_info.price = int(good_info.price)
-            good_info.amount = int(good_info.amount)
-            good_info.shelf_life = int(good_info.shelf_life)
+            
             self.list_with_goods.append(good_info)
 
             return True
@@ -376,6 +376,7 @@ class GoodInfoList:
             if good.name == name:
                 logging.info("Удаленный товар: {good}".format(good=good))
                 self.list_with_goods.remove(good)
+
                 return True
         
         return False
@@ -390,12 +391,14 @@ class GoodInfoList:
         print("Удаление из списка самого дорогого товара")
 
         most_expensive = self.get_list_most_expensive()
-        expensive_good = most_expensive[0]
+        
+        if len(most_expensive) > 0:
+            expensive_good = most_expensive[0]
 
-        for good in self.list_with_goods:
-            if good.price == expensive_good.price:
-                self.list_with_goods.remove(good)
-                return good.name
+            for good in self.list_with_goods:
+                if good.price == expensive_good.price:
+                    self.list_with_goods.remove(good)
+                    return good.name
 
     def get_list_most_expensive(self):
         """
