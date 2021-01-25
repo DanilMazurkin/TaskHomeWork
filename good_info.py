@@ -2,7 +2,6 @@ from math import sqrt
 from datetime import datetime, timedelta
 from operator import attrgetter
 import logging 
-from database import Database
 from db_models import Good, Provider, Delivery, Shelf
 from sqlalchemy import func
 

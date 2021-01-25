@@ -233,7 +233,7 @@ class GoodInfoListDB:
         
         if goods_find_list_count > 1:
             
-            min_date = min([good.dates_delivery.date_manufacture 
+            min_date = min([good.id 
                             for good in goods_find_list
                             if good.amount > amount
                             ])
