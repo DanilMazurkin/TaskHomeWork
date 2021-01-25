@@ -75,5 +75,6 @@ def main():
                                         name = good.name,
                                         price = good.price))
 
+
 if __name__ == '__main__':
     main()

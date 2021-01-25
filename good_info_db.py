@@ -1,8 +1,7 @@
 from good_info import GoodInfo
-from datetime import datetime, timedelta
 from math import sqrt
 import logging 
-from database import Database
+from db_worker import DB_Worker
 from db_models import Good, Provider, Delivery, Shelf
 from sqlalchemy import func, text, update
 
@@ -45,7 +44,7 @@ class GoodInfoListDB:
         Initialize database and session,
         and also set tables 
         """
-        self.database = Database()
+        self.database = DB_Worker()
         self.session = self.database.get_session() 
         self.database.set_tables()
 
@@ -295,7 +294,6 @@ class GoodInfoListDB:
                                      good_info.amount,
                                      good_info.price,
                                      id_provider, 
-                                     id_date_delivery,
                                      id_shelf)
             
             return True
@@ -387,7 +385,7 @@ class GoodInfoListDB:
         self.session.commit()
     
     def add_record_good(self, name, amount, price, 
-                        id_provider, id_date, id_shelf):
+                        id_provider, id_shelf):
         """
         Add record good in table
         goods    
@@ -410,7 +408,6 @@ class GoodInfoListDB:
             amount=amount,
             price=price,
             id_provider=id_provider,
-            id_date=id_date,
             id_shelf=id_shelf
         )
 

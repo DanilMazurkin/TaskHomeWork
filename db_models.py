@@ -28,23 +28,17 @@ class Good(Base):
                          ForeignKey('providers.id',
                                      ondelete="CASCADE",
                                      onupdate="CASCADE"))
-
-    id_date = Column('id_date_delivery', 
-                      Integer, 
-                      ForeignKey('dates_delivery.id',
-                                 ondelete="CASCADE",
-                                 onupdate="CASCADE"))
-
+    
     id_shelf = Column('id_shelf', 
-                           Integer, 
-                           ForeignKey('shelfs_life.id',
-                                      ondelete="CASCADE",
-                                      onupdate="CASCADE"))
+                        Integer, 
+                        ForeignKey('shelfs_life.id',
+                                    ondelete="CASCADE",
+                                    onupdate="CASCADE"))
 
 
 class Provider(Base):
     """
-    Good represents table 
+    Provider represents table 
     providers in database
     """
 
@@ -57,7 +51,7 @@ class Provider(Base):
 
 class Delivery(Base):
     """
-    Good represents table 
+    Delivery represents table 
     dates_delivery in database
     """
 
@@ -70,12 +64,21 @@ class Delivery(Base):
 
 class Shelf(Base):
     """
-    Good represents table 
+    Shelf represents table 
     shelfs_life in database
     """
 
     __tablename__ = "shelfs_life"
 
     id = Column('id', Integer, primary_key=True)
+    
+    name = Column('name', String)
 
     shelf_life = Column('shelf_life', Integer)
+
+    id_shelf = Column('id_delivery', 
+                        Integer, 
+                        ForeignKey('dates_delivery.id',
+                                    ondelete="CASCADE",
+                                    onupdate="CASCADE"))
+    
