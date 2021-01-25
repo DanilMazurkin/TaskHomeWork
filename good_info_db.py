@@ -279,16 +279,18 @@ class GoodInfoListDB:
                                            good_info.shelf_life)):
 
 
-            self.add_record_shelf(good_info.shelf_life)
             self.add_record_delivery(good_info.date_import)
             self.add_record_provider("Default")
             
             id_shelf = self.get_id_shelf(good_info.shelf_life)
-            id_provider = self.get_id_provider_by_name("Default")
-            
+            id_provider = self.get_id_provider_by_name("Default")            
             id_date_delivery = self.get_id_delivery_by_date(
                                                     good_info.date_import)
             
+            self.add_record_shelf(good_info.name, 
+                                good_info.shelf_life,
+                                id_date_delivery
+                                )
 
             self.add_record_good(good_info.name,
                                      good_info.amount,
@@ -340,7 +342,7 @@ class GoodInfoListDB:
         
         return True
 
-    def add_record_shelf(self, shelf_life):
+    def add_record_shelf(self, name, shelf_life, id_delivery):
         """
         Add shelf life in table
         shelfs life
@@ -348,7 +350,9 @@ class GoodInfoListDB:
         :type shelf_life: Integer
         """
         shelf = Shelf(
-            shelf_life=shelf_life
+            name=name,
+            shelf_life=shelf_life,
+            id_delivery=id_delivery
         )
 
         self.session.add(shelf)

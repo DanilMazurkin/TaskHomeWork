@@ -76,7 +76,7 @@ class Shelf(Base):
 
     shelf_life = Column('shelf_life', Integer)
 
-    id_shelf = Column('id_delivery', 
+    id_delivery = Column('id_delivery', 
                         Integer, 
                         ForeignKey('dates_delivery.id',
                                     ondelete="CASCADE",
