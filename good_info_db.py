@@ -1,10 +1,11 @@
 from good_info import GoodInfo
 from math import sqrt
+from datetime import datetime
 import logging 
 from db_worker import DB_Worker
 from db_models import Good, Provider, Delivery, Shelf
 from sqlalchemy import func, text, update
-
+from sqlalchemy import and_
 
 class GoodInfoListDB:
     """
@@ -58,6 +59,27 @@ class GoodInfoListDB:
         self.session.query(Good).filter(Good.price == max_price_db).\
                     delete(synchronize_session='evaluate')
         self.session.commit()
+    
+    def check_date_manafucture_list(self):
+        """
+        If the expiration in list date has expired, then the product is removed
+        :return: GoodInfoList with removing goods
+        :rtype: GoodInfoList
+        """
+
+        logging.info("Проверка на истечение срока годности")
+        list_goods = self.session.query(Good, Shelf, Delivery)\
+                                 .filter(and_(
+                                    Good.id_shelf == Shelf.id,
+                                    Delivery.id == Shelf.id_delivery
+                                ))
+
+        for good, shelf, delivery in list_goods:
+            date_manufacture = str(delivery.date_delivery)
+
+            if GoodInfo.check_shell_life_good(date_manufacture, 
+                                              shelf.shelf_life):
+                self.remove(good.name)
     
     def remove_last(self):
         """
@@ -233,14 +255,20 @@ class GoodInfoListDB:
         
         if goods_find_list_count > 1:
             
-            min_date = min([good.id 
-                            for good in goods_find_list
+            list_goods = self.session.query(Good, Shelf, Delivery)\
+                                 .filter(and_(
+                                    Good.id_shelf == Shelf.id,
+                                    Delivery.id == Shelf.id_delivery
+                                ))
+
+            min_date = min([delivery.date_delivery 
+                            for good, shelf, delivery in list_goods
                             if good.amount > amount
                             ])
             earnings = 0
 
-            for good in goods_find_list:
-                if good.date_manufacture == min_date:
+            for good, shelf, delivery in list_goods:
+                if delivery.date_manufacture == min_date:
                     good.amount -= amount
                     earnings = amount * good.price
                     self.session.query(Good).\
@@ -406,7 +434,7 @@ class GoodInfoListDB:
         :param id_shelf: id shelf in table
         :type id_shelf: Integer
         """
-
+        
         good = Good(
             name=name,
             amount=amount,

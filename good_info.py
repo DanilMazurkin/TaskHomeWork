@@ -1,4 +1,5 @@
 from math import sqrt
+from dateutil.parser import parse
 from datetime import datetime, timedelta
 from operator import attrgetter
 import logging 
@@ -158,7 +159,7 @@ class GoodInfo:
         """
         
         shelf_life = timedelta(days=int(shelf_life))
-        good_date =  datetime.strptime(good_date, "%Y-%m-%d")
+        good_date =  parse(good_date)
         ending_shelf_life = good_date + shelf_life
         today = datetime.today()
 
@@ -434,7 +435,6 @@ class GoodInfoList:
                     return True
                 else:
                     return False
-
 
     def get_list_with_cheap_goods(self):
         """

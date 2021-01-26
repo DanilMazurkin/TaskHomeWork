@@ -3,11 +3,8 @@ import logging
 from file_work import FileWork
 from datetime import datetime
 from good_info_db import GoodInfoListDB
+import json
 
-
-"""
-Main function with entry point
-"""
 
 FORMAT = '%(asctime)s %(levelname)s %(filename)s - %(funcName)s - %(message)s'
     
@@ -72,4 +69,7 @@ if len(file_data) > 0:
         print("Имя: {name} Цена: {price}".format(
                                             name = good.name,
                                             price = good.price))
+
+    info_list.check_date_manafucture_list()
+
 
