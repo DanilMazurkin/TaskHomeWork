@@ -11,7 +11,7 @@ FORMAT = '%(asctime)s %(levelname)s %(filename)s - %(funcName)s - %(message)s'
 logging.basicConfig(filename="reporter.log", filemode='a',
                     level=logging.INFO, format=FORMAT)
 
-info_list = DB_Worker()
+info_list = good_info.GoodInfoList()
     
 file_goods = FileWork()
 file_data = file_goods.select_path_file()

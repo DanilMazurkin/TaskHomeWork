@@ -8,10 +8,11 @@ from db_models import Good, Provider, Delivery, \
                       Shelf, Base
 from sqlalchemy.dialects import mysql
 from sqlalchemy.orm import Session
-from good_info import GoodInfo
 from math import sqrt
 import logging 
 from sqlalchemy import func, text, update, and_
+from datetime import datetime, timedelta
+from dateutil.parser import parse
 
 
 class DB_Worker:
@@ -55,6 +56,10 @@ class DB_Worker:
     get_id_provider_by_name(name)
     get_id_delivery_by_date(date_delivery):
     get_id_shelf(shelf_life)
+    get_max_price()
+    get_min_price()
+    update_good()
+    get_list_by_date_and_shelf()
     """
 
     def __init__(self):
@@ -81,6 +86,13 @@ class DB_Worker:
         
         Base.metadata.create_all(self.engine)
 
+    def get_session(self):
+        """
+        Function return session
+        """
+
+        return self.session
+
     def __get_engine(self):
         """
         Return engine for database
@@ -101,246 +113,6 @@ class DB_Worker:
         self.metadata.reflect()
 
         return self.engine
-    
-    def remove_expensive(self):
-        """
-        Remove most expensive good from 
-        table goods in database
-        """
-        max_price_db = self.session.query(func.max(Good.price)).scalar()
-
-        self.session.query(Good).filter(Good.price == max_price_db).\
-                    delete(synchronize_session='evaluate')
-        self.session.commit()
-    
-    def check_date_manafucture_list(self):
-        """
-        If the expiration in list date has expired, then the product is removed
-        :return: GoodInfoList with removing goods
-        :rtype: GoodInfoList
-        """
-
-        logging.info("Проверка на истечение срока годности")
-        list_goods = self.session.query(Good, Shelf, Delivery)\
-                                 .filter(and_(
-                                    Good.id_shelf == Shelf.id,
-                                    Delivery.id == Shelf.id_delivery
-                                ))
-
-        for good, shelf, delivery in list_goods:
-            date_manufacture = str(delivery.date_delivery)
-
-            if GoodInfo.check_shell_life_good(date_manufacture, 
-                                              shelf.shelf_life):
-                self.remove(good.name)
-    
-    def remove_last(self):
-        """
-        Remove last good from goods
-        from table goods in database
-        """
-        count_goods = self.session.query(func.count(Good.id)).scalar()
-        
-        self.session.query(Good).filter(Good.id == count_goods).\
-                    delete(synchronize_session='evaluate')            
-        self.session.commit()
-    
-    def get_std(self):
-        """
-        Calculate standart deviation
-        by price
-        :return: standart deviation
-        :rtype: Number 
-        """
-
-        price_goods = self.session.query(Good.price)
-        
-        n = self.session.query(func.count(Good.id)).scalar()
-
-        values = self.get_value_info()
-        mean = values['mean']
-
-        deviations = [(good.price - mean) ** 2 for good in price_goods]
-        variance = sum(deviations) / n
-        
-        return sqrt(variance)
-
-    def remove(self, name):
-        """
-        Remove good by name
-        """
-        
-        self.session.query(Good).filter(Good.name == name).\
-                delete(synchronize_session='evaluate')
-        self.session.commit()
-
-    def get_list_ending_goods(self):
-        """
-        Get list where amount less five
-        :return: goods from database
-        :rtype: list Query 
-        """
-        goods = self.session.query(Good).filter(Good.amount < 5)
-
-        return goods
-    
-    def get_list_most_expensive(self):
-        """
-        Get list with most 
-        expensive goods
-        :return: Query list with goods expensive
-        :rtype: Query list
-        """
-        max_price_db = self.session.query(func.max(Good.price)).scalar()
-
-        goods_expensive = self.session.query(Good).filter(
-                                                Good.price == max_price_db)
-
-        return goods_expensive
-
-    def get_list_with_cheap_goods(self):
-        """
-        Get list with cheap goods
-        :return: Query list with cheap goods
-        :rtype: Query list
-        """
-
-        min_price_db = self.session.query(func.min(Good.price)).scalar()
-
-        cheaps_goods = self.session.query(Good).filter(
-                                                Good.price == min_price_db)
-
-        return cheaps_goods
-    
-    def sort(self, name):
-        """
-        Sort list with goods by key
-        :param key: name field by which need sort
-        :type key: string
-        :return: sorted list with goods
-        :rtype: Query list
-        """
-
-        if name == "price":
-            order_by_price = self.session.query(Good).\
-                                            order_by(Good.price)            
-            return order_by_price
-        
-        elif name == "amount":
-            order_by_amount = self.session.query(Good).\
-                                            order_by(Good.amount)
-
-            return order_by_amount
-
-        elif name == "name":
-            order_by_name = self.session.query(Good).\
-                                        order_by(Good.name)
-            return order_by_name
-
-        else:
-            raise AttributeError
-    
-    def get_value_info(self):
-        """ 
-        Function get values about products
-        :return: Function return dictionary with 
-        amount products and mean value
-        if column good price is empty 
-        function return -1
-        :rtype: Return dictionary with key:amount and key:mean and
-        :amount=(Number)
-        :mean=(float Number)
-        """
-        
-        count = self.session.query(func.count(Good.id)).scalar()
-        
-        if count == 0:
-            return -1
-
-        mean = self.session.query(func.avg(Good.price)).scalar()
-
-        return {'amount': count, 'mean': mean}        
-
-    def product_buy(self, name, amount):
-        """
-        Function allows you to buy a product
-        :param name: name good
-        :type name: string
-        :param amount: amount goods
-        :type amount: integer
-        :return: Function return False if total amount goods less
-        then amount, function return false if goood end, function
-        return earnings else
-        :rtype: bool if false, else integer
-        """
-
-        count_product_by_name = self.session.query(Good).\
-                                                filter(name == Good.name).\
-                                                count()
-        if count_product_by_name == 0:
-            logging.info("Нет товара с именем {name}".format(name=name))
-            print("Нет товара с именем {name}".format(name=name))
-            return False
-
-        goods_find_list = self.session.query(Good).\
-                                            filter(name == Good.name)
-        goods_find_list_count = self.session.query(Good).\
-                                            filter(name == Good.name).\
-                                            count()
-        
-        availability = any(good.amount > 0 for good in goods_find_list)
-
-        if availability is False:
-            logging.info("Товар закончился ({product}) "
-                        "(выручка - None)".format(product=name))
-            print("Товар закончился ({product}) "
-                        "(выручка - None)".format(product=name))
-            return False
-        
-        total_amount = sum([good.amount for good in goods_find_list])
-
-        if goods_find_list_count == 1 and total_amount < amount:
-            logging.info("Количество запрашиваемых товаров больше "
-                        "чем имеется в наличии (выручка - None)")
-            print("Количество запрашиваемых товаров больше "
-                        "чем имеется в наличии (выручка - None)")
-            return False
-        
-        if goods_find_list_count > 1:
-            
-            list_goods = self.session.query(Good, Shelf, Delivery)\
-                                 .filter(and_(
-                                    Good.id_shelf == Shelf.id,
-                                    Delivery.id == Shelf.id_delivery
-                                ))
-
-            min_date = min([delivery.date_delivery 
-                            for good, shelf, delivery in list_goods
-                            if good.amount > amount
-                            ])
-            earnings = 0
-
-            for good, shelf, delivery in list_goods:
-                if delivery.date_delivery == min_date:
-                    good.amount -= amount
-                    earnings = amount * good.price
-                    self.session.query(Good).\
-                        filter(Good.name == name).\
-                        update({"amount": (Good.amount - amount)})
-                    self.session.commit()
-
-            return earnings
-        
-        elif goods_find_list_count == 1:
-            good = goods_find_list[0]
-            earnings = amount * good.price
-
-            self.session.query(Good).\
-                        filter(Good.name == name).\
-                        update({"amount": (Good.amount - amount)})
-            self.session.commit()
-
-            return earnings
 
     def add(self, good_info):
         """"
@@ -350,13 +122,13 @@ class DB_Worker:
         :return: function nothing return
         """
 
-        if (GoodInfo.check_product_data(good_info.name, 
+        if (DB_Worker.__check_product_data(good_info.name, 
                                        good_info.price, 
                                        good_info.amount, 
                                        good_info.date_import, 
                                        good_info.shelf_life) and
             
-            GoodInfo.check_shell_life_good(good_info.date_manufacture, 
+            DB_Worker.__check_shell_life_good(good_info.date_manufacture, 
                                            good_info.shelf_life)):
 
             self.add_record_delivery(good_info.date_import)
@@ -385,44 +157,6 @@ class DB_Worker:
             logging.error("Следующая строка не была обработана: {good_info}".format(
                                                                    good_info=good_info))
             return False
-    
-    def get_from_file(self, list_from_file):
-        """
-        Fill database tables of goods from file data
-        :param list_from_file: data from file
-        :type list_from_file: list
-        :return: Function return False if list_from_file empty, else True
-        """
-
-        logging.info("Формирование списка GoodInfoList")
-
-        if len(list_from_file) == 0:
-            logging.error("После прочтений из файла получился пустой список")
-            return False
-
-        for product in list_from_file:
-            product_data = product.split(":")
-            
-            if len(product_data) != 5:
-                logging.error("Следующая строка не была обработана1: {product}".format(
-                              product=product))
-                continue
-
-            name_product = product_data[0]
-            price_product = product_data[1]
-            product_amount = product_data[2]
-            product_date =  product_data[3]
-            shelf_life = product_data[4]
-            date_manufacture = product_data[3]
-
-            self.add(GoodInfo(name_product, 
-                              price_product, 
-                              product_amount, 
-                              product_date, 
-                              shelf_life, 
-                              date_manufacture))
-        
-        return True
 
     def add_record_shelf(self, name, shelf_life, id_delivery):
         """
@@ -448,12 +182,18 @@ class DB_Worker:
         :type date_delivery: Date
         """
 
-        delivery = Delivery(
-            date_delivery=date_delivery
-        )
+        count_date = self.session.query(Delivery).filter(
+                                    Delivery.date_delivery == date_delivery
+                                ).\
+                                count()
+        
+        if count_date == 0:
+            delivery = Delivery(
+                date_delivery=date_delivery
+            )
 
-        self.session.add(delivery)
-        self.session.commit()
+            self.session.add(delivery)
+            self.session.commit()
 
     def add_record_provider(self, name):
         """
@@ -463,12 +203,17 @@ class DB_Worker:
         :type name: String
         """
 
-        provider = Provider(
-            name=name
-        )
+        count_provider = self.session.query(Provider).filter(
+                                        Provider.name == name).\
+                                        count()
+        if count_provider == 0:
+            
+            provider = Provider(
+                name=name
+            )
 
-        self.session.add(provider)
-        self.session.commit()
+            self.session.add(provider)
+            self.session.commit()
     
     def add_record_good(self, name, amount, price, 
                         id_provider, id_shelf):
@@ -557,6 +302,272 @@ class DB_Worker:
 
         return id
 
-   
-    
+    @staticmethod
+    def __check_shell_life_good(good_date, shelf_life):
+        """
+        Check shell life
+        :param good_date: str with date
+        :type good_date: string
+        :param shelf_life: shelf life of date
+        :type shelf_life:
+        :return: return true if shelf life end and return
+        False if shelf life not end
+        """
+        
+        shelf_life = timedelta(days=int(shelf_life))
+        good_date =  parse(good_date)
+        ending_shelf_life = good_date + shelf_life
+        today = datetime.today()
 
+        if today < ending_shelf_life:
+            return True
+        else:
+            return False
+    
+    @staticmethod
+    def __check_product_data(name, price, amount, date_import, shelf_life):
+        """
+        Check format data product from list with products
+        
+        :param name: name good
+        :type name: string
+
+        :param price: price good
+        :type price: integer
+        
+        :param price: price good
+        :type price: string
+        
+        :param amount: amount good
+        :type amount: string
+        
+        :param date_import: string with date
+        :type date_import: string
+        
+        :param shelf_life: shelf life good
+        :type shelf_life: string
+        
+        :return: Return True if format right else return
+        false if format not right
+        :rtype: Return bool value
+        """
+        
+        price = str(price)
+        amount = str(amount)
+        shelf_life = str(shelf_life)
+
+        if name == "":
+            return False
+
+        if (not price.isdigit() and not amount.isdigit() and 
+            not shelf_life.isdigit()):
+            return False
+        
+        shelf_life = int(shelf_life)
+        price = int(price)
+        amount = int(amount)
+
+        if (shelf_life > 0 and price > 0 and 
+            amount >= 0 and DB_Worker.__check_date(date_import)):
+            return True
+        
+        return False
+    
+    @staticmethod
+    def __check_date(good_date):
+        """
+        Check date on right format
+        :param good_date: string with date 
+        :type good_date: string
+        :return: true if date of delivery less then 
+        current date, else false
+        :rtype: bool 
+        """
+
+        date_import =  datetime.strptime(good_date, "%Y-%m-%d")
+        today = datetime.today()
+
+        if date_import > today:
+            logging.error("Дата поставки меньше текущей!")
+            return False
+        else:
+            return True
+
+    def get_max_price(self):
+        """
+        Return max price goods
+        """
+
+        max_price = self.session.query(func.max(Good.price)).scalar()
+
+        return max_price
+
+    def get_min_price(self):
+        """
+        Return max price goods
+        """
+
+        min_price = self.session.query(func.max(Good.price)).scalar()
+
+        return min_price
+
+    def update_good(self, name, amount):
+        """
+        Update good in database
+        :param name: name good
+        :param amount: amount good
+        """
+
+        self.session.query(Good).\
+                        filter(Good.name == name).\
+                        update({"amount": (Good.amount - amount)})
+        self.session.commit()
+
+    def get_list_by_date_and_shelf(self):
+        """
+        Return list by date and shelf
+        """
+
+        list_data = self.session.query(Good, Shelf, Delivery)\
+                                 .filter(and_(
+                                    Good.id_shelf == Shelf.id,
+                                    Delivery.id == Shelf.id_delivery
+                                ))
+        
+        return list_data
+    
+    def get_list_by_name(self, name):
+        """
+        Return list by name
+        """
+
+        goods_find_list = self.session.query(Good).\
+                                            filter(name == Good.name)
+
+        return goods_find_list
+    
+    def get_count_good_by_name(self, name):
+        """
+        Get good count by name
+        """
+
+        goods_find_list_count = self.session.query(Good).\
+                                            filter(name == Good.name).\
+                                            count()
+
+        return goods_find_list_count
+    
+    def get_count_goods(self):
+        """
+        Return count good
+        """
+
+        count = self.session.query(func.count(Good.id)).scalar()
+
+        return count    
+    
+    def get_average_goods(self):
+        """
+        Get average goods
+        """
+
+        average = self.session.query(func.avg(Good.price)).scalar()
+
+        return average
+    
+    def get_sort_goods_by_name(self):
+        """
+        Return sort goods by name
+        """
+
+        goods_order_by_name = self.session.query(Good).\
+                                        order_by(Good.name)
+
+        return goods_order_by_name
+    
+    def get_sort_goods_by_amount(self):
+        """
+        Return sort goods by amount
+        """
+
+        goods_order_by_amount = self.session.query(Good).\
+                                    order_by(Good.amount)
+        
+        return goods_order_by_amount
+    
+    def get_sort_goods_by_price(self):
+        """
+        Return sort goods by price
+        """
+
+        goods_price_by_price = self.session.query(Good).\
+                                            order_by(Good.price)
+
+        return goods_price_by_price                       
+    
+    def get_good_with_max_price(self):
+        """
+        Return max price from goods
+        """
+        
+        max_price = self.session.query(func.max(Good.price)).scalar()
+
+        return max_price
+    
+    def get_goods_by_price(self, price):
+        """
+        Return goods by price
+        :param price: price good
+        :type price: Integer
+        :return: good filter by price
+        """
+
+        price_goods = self.session.query(Good).filter(
+                                                Good.price == price)
+
+        return price_goods
+
+    def remove_goods_with_max_price(self):
+        """
+        Return goods with max price
+        """
+
+        max_price = self.get_good_with_max_price()
+        
+        goods = self.session.query(Good).filter(
+                                        Good.price == max_price).\
+                                delete(synchronize_session='evaluate')
+        self.session.commit()
+
+        return goods
+
+    def remove_last(self):
+        """
+        Remove last in database
+        """
+        count_goods = self.get_count_goods()
+        
+        self.session.query(Good).filter(Good.id == count_goods).\
+                    delete(synchronize_session='evaluate')            
+        self.session.commit()
+    
+    def get_goods_ending(self):
+        """
+        Return goods ending
+        :return goods: goods query with 
+        ending goods
+        :type goods: Query
+        """
+
+        goods = self.session.query(Good).filter(Good.amount < 5)
+
+        return goods
+
+    def remove_by_name(self, name):
+        """
+        Remove good by name
+        """
+        
+        self.session.query(Good).filter(Good.name == name).\
+                delete(synchronize_session='evaluate')
+        self.session.commit()
