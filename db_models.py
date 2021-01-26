@@ -39,6 +39,7 @@ class Good(Base):
     provider = relationship("Provider", back_populates="good")
     shelf = relationship("Shelf", back_populates="good")
 
+
 class Provider(Base):
     """
     Provider represents table 
