@@ -80,7 +80,7 @@ class GoodInfo:
         )
 
     
-class GoodInfoList(DB_Worker):
+class GoodInfoList:
     """
     Represents good info
 
@@ -104,7 +104,7 @@ class GoodInfoList(DB_Worker):
     __getitem__(name)
     get_value_info()
     get_list_with_cheap_goods() 
-
+    
     """
 
     def __init__(self):
