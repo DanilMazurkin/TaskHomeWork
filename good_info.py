@@ -104,7 +104,7 @@ class GoodInfoList:
     __getitem__(name)
     get_value_info()
     get_list_with_cheap_goods() 
-    
+
     """
 
     def __init__(self):
@@ -297,14 +297,14 @@ class GoodInfoList:
                 if delivery.date_delivery == min_date:
                     good.amount -= amount
                     earnings = amount * good.price
-                    self.database.update_good(name, amount)
+                    self.database.update_good_amount(name, amount)
 
             return earnings
         
         elif count_product_by_name == 1:
             good = goods_find_list[0]
             earnings = amount * good.price
-            self.database.update_good(name, amount)
+            self.database.update_good_amount(name, amount)
 
             return earnings
     

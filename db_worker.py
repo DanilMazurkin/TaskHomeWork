@@ -68,10 +68,11 @@ class DB_Worker:
         engine, session
         """
         
-        self.DB_NAME = 'TestAndLearning'
+        self.DB_NAME = 'learn_db_test'
         self.HOST_NAME = '127.0.0.1'
         self.USER_NAME = 'postgres'
-        self.PASS = os.environ.get('CONPASS')
+        # self.PASS = os.environ.get('CONPASS')
+        self.PASS = 'ohshitbegi2019'
         self.metadata = None
         self.engine = self.__get_engine()
         self.session = Session(bind=self.engine)
@@ -410,7 +411,7 @@ class DB_Worker:
 
         return min_price
 
-    def update_good(self, name, amount):
+    def update_good_amount(self, name, amount):
         """
         Update good in database
         :param name: name good
