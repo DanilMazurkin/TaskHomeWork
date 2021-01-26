@@ -3,6 +3,7 @@ from sqlalchemy import create_engine, String,  \
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -35,6 +36,8 @@ class Good(Base):
                                     ondelete="CASCADE",
                                     onupdate="CASCADE"))
 
+    provider = relationship("Provider", back_populates="good")
+    shelf = relationship("Shelf", back_populates="good")
 
 class Provider(Base):
     """
@@ -47,6 +50,8 @@ class Provider(Base):
     id = Column('id', Integer, primary_key=True)
 
     name = Column('name', String)
+
+    good = relationship("Good", back_populates="provider")
 
 
 class Delivery(Base):
@@ -61,6 +66,8 @@ class Delivery(Base):
 
     date_delivery = Column('date_delivery', Date)
 
+    shelf = relationship("Shelf", back_populates="delivery")
+    
 
 class Shelf(Base):
     """
@@ -76,9 +83,15 @@ class Shelf(Base):
 
     shelf_life = Column('shelf_life', Integer)
 
+
     id_delivery = Column('id_delivery', 
                         Integer, 
                         ForeignKey('dates_delivery.id',
                                     ondelete="CASCADE",
                                     onupdate="CASCADE"))
+    
+    delivery = relationship("Delivery", back_populates="shelf")
+    
+    good = relationship("Good", back_populates="shelf")
+
     

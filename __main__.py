@@ -2,7 +2,7 @@ import good_info
 import logging
 from file_work import FileWork
 from datetime import datetime
-from good_info_db import GoodInfoListDB
+from db_worker import DB_Worker
 import json
 
 
@@ -11,7 +11,7 @@ FORMAT = '%(asctime)s %(levelname)s %(filename)s - %(funcName)s - %(message)s'
 logging.basicConfig(filename="reporter.log", filemode='a',
                     level=logging.INFO, format=FORMAT)
 
-info_list = GoodInfoListDB()
+info_list = DB_Worker()
     
 file_goods = FileWork()
 file_data = file_goods.select_path_file()
@@ -70,6 +70,5 @@ if len(file_data) > 0:
                                             name = good.name,
                                             price = good.price))
 
-    info_list.check_date_manafucture_list()
 
 
