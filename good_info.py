@@ -130,9 +130,9 @@ class GoodInfoList:
         for good, shelf, delivery in list_goods:
             date_manufacture = str(delivery.date_delivery)
 
-            if DB_Worker.check_shell_life_good(date_manufacture, 
+            if not DB_Worker.check_shell_life_good(date_manufacture, 
                                               shelf.shelf_life):
-                self.database.remove(good.name)
+                self.database.remove_by_name(good.name)
     
     def remove_last(self):
         """
@@ -240,7 +240,7 @@ class GoodInfoList:
 
         mean = self.database.get_average_goods()
 
-        return {'amount': count, 'mean': mean}        
+        return {'amount': count, 'mean': float(mean)}        
 
     def product_buy(self, name, amount):
         """

@@ -68,10 +68,11 @@ class DB_Worker:
         engine, session
         """
         
-        self.DB_NAME = 'TestAndLearning'
+        self.DB_NAME = 'learn_db_test'
         self.HOST_NAME = '127.0.0.1'
         self.USER_NAME = 'postgres'
-        self.PASS = os.environ.get('CONPASS')
+        # self.PASS = os.environ.get('CONPASS')
+        self.PASS = 'ohshitbegi2019'
         self.metadata = None
         self.engine = self.__get_engine()
         self.session = Session(bind=self.engine)
@@ -120,7 +121,7 @@ class DB_Worker:
                                        good_info.date_import, 
                                        good_info.shelf_life) and
             
-            DB_Worker.__check_shell_life_good(good_info.date_manufacture, 
+            DB_Worker.check_shell_life_good(good_info.date_manufacture, 
                                            good_info.shelf_life)):
 
             self.add_record_delivery(good_info.date_import)
@@ -295,7 +296,7 @@ class DB_Worker:
         return id
 
     @staticmethod
-    def __check_shell_life_good(good_date, shelf_life):
+    def check_shell_life_good(good_date, shelf_life):
         """
         Check shell life
         :param good_date: str with date
