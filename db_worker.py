@@ -68,11 +68,10 @@ class DB_Worker:
         engine, session
         """
         
-        self.DB_NAME = 'learn_db_test'
+        self.DB_NAME = 'TestAndLearning'
         self.HOST_NAME = '127.0.0.1'
         self.USER_NAME = 'postgres'
-        # self.PASS = os.environ.get('CONPASS')
-        self.PASS = 'ohshitbegi2019'
+        self.PASS = os.environ.get('CONPASS')
         self.metadata = None
         self.engine = self.__get_engine()
         self.session = Session(bind=self.engine)
@@ -85,13 +84,6 @@ class DB_Worker:
         """   
         
         Base.metadata.create_all(self.engine)
-
-    def get_session(self):
-        """
-        Function return session
-        """
-
-        return self.session
 
     def __get_engine(self):
         """
@@ -439,6 +431,8 @@ class DB_Worker:
     def get_list_by_name(self, name):
         """
         Return list by name
+        :param name: name good
+        :type name: string
         """
 
         goods_find_list = self.session.query(Good).\
@@ -449,6 +443,8 @@ class DB_Worker:
     def get_count_good_by_name(self, name):
         """
         Get good count by name
+        :param name: name good
+        :type name: string
         """
 
         goods_find_list_count = self.session.query(Good).\
@@ -468,7 +464,7 @@ class DB_Worker:
     
     def get_average_goods(self):
         """
-        Get average goods
+        Return average price goods
         """
 
         average = self.session.query(func.avg(Good.price)).scalar()
