@@ -1,0 +1,16 @@
+{
+     "path_to_file": "/home/jatx/TaskHomeWork3/goods2.info",
+     "list_functions": {
+          "get_from_file": true,
+          "get_value": 126.37931034482759,
+          "remove_expensive": null,
+          "check_date_manafucture_list": null
+     },
+     "logging_settings": {
+          "format_logging": "%(asctime)s %(levelname)s %(filename)s - %(funcName)s - %(message)s",
+          "level_logging": 20,
+          "filemode_logging": "a",
+          "filename_logging": "reporter.log"
+     },
+     "command_for_execute": "python3 /home/jatx/TaskHomeWork3 -m"
+}

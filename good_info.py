@@ -133,7 +133,7 @@ class GoodInfoList:
             if not DB_Worker.check_shell_life_good(date_manufacture, 
                                               shelf.shelf_life):
                 self.database.remove_by_name(good.name)
-    
+
     def remove_last(self):
         """
         Remove last good from goods

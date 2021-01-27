@@ -33,7 +33,9 @@ if len(file_data) > 0:
 
 
     json_config_script = {
-        "path_to_file": os.path.join(os.getcwd(), "goods2.info"),
+        "path_to_file": os.path.join(os.path.dirname(
+                                        os.path.realpath(__file__)
+                                    ), "goods2.info"),
         "list_functions": {
             "get_from_file": info_list.get_from_file(file_data),
             "get_value": info_list.get_value_info()['mean'],
@@ -41,16 +43,21 @@ if len(file_data) > 0:
             "check_date_manafucture_list": info_list.\
                                              check_date_manafucture_list(),
         },    
+        "logging_settings": json_dict_for_logging,
         "command_for_execute": 'python3 '
                                '{directory_with_script} -m'.\
                                 format(
-                                    directory_with_script=os.getcwd()
-                                ),
-        "logging_settings": json_dict_for_logging
+                                    directory_with_script=os.path.\
+                                                        dirname(os.path.\
+                                                        realpath(__file__))
+                                )
     }
 
-    with open("config_script.json", "w") as data_file:
-        json.dump(json_config_script, data_file)
-
+    path_to_config = os.path.join(os.path.dirname(os.path.\
+                                                realpath(__file__)),
+                                                "config_script.json")
+        
+    with open(path_to_config, "w") as fp:
+        json.dump(json_config_script, fp, indent=5)
 
 
