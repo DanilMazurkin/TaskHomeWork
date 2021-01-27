@@ -72,7 +72,6 @@ class DB_Worker:
         self.HOST_NAME = '127.0.0.1'
         self.USER_NAME = 'postgres'
         self.PASS = os.environ.get('CONPASS')
-        self.PASS = 'ohshitbegi2019'
         self.metadata = None
         self.engine = self.__get_engine()
         self.session = Session(bind=self.engine)
