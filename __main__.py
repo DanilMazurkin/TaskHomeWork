@@ -38,7 +38,7 @@ logging.basicConfig(filename=dict_config["filename_logging"],
                     format=dict_config["format_logging"])
 
 
-if "execute_list_function" in dict_config["list_function"]:
+if "exec_list_function" in dict_config["list_function"].values():
     exec_list_function(dict_config)
 
 
