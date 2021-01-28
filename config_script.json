@@ -1,16 +1,15 @@
 {
-     "path_to_file": "/home/jatx/TaskHomeWork3/goods2.info",
-     "list_functions": {
-          "get_from_file": true,
-          "get_value": 126.37931034482759,
-          "remove_expensive": null,
-          "check_date_manafucture_list": null
+     "path_to_data": "/home/jatx/TaskHomeWork3/goods2.info",
+     "format_logging": "%(asctime)s %(levelname)s %(filename)s - %(funcName)s - %(message)s",
+     "level_logging": 20,
+     "filemode_logging": "a",
+     "filename_logging": "reporter.log",
+     "list_function": {
+          "calculate_mean": "get_value_info",
+          "add_from_file_in_database": "get_from_file",
+          "remove_expensive_good": "remove_expensive",
+          "remove_overdue_goods": "check_date_manafucture_list",
+          "execute_list_function": "exec_list_function"
      },
-     "logging_settings": {
-          "format_logging": "%(asctime)s %(levelname)s %(filename)s - %(funcName)s - %(message)s",
-          "level_logging": 20,
-          "filemode_logging": "a",
-          "filename_logging": "reporter.log"
-     },
-     "command_for_execute": "python3 /home/jatx/TaskHomeWork3 -m"
+     "run __main__": "python3 /home/jatx/TaskHomeWork3 -m"
 }

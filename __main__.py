@@ -1,63 +1,52 @@
 import os
-import good_info
 import logging
-from file_work import FileWork
-from datetime import datetime
-from db_worker import DB_Worker
 import json
+from execute_from_config import exec_list_function
 
 
-info_list = good_info.GoodInfoList()
-    
-file_goods = FileWork()
-file_data = file_goods.select_path_file()
-
-file_goods.save_in_directory()
-
-if len(file_data) > 0:
-    
-    json_dict_for_logging = {
-        'format_logging': '%(asctime)s %(levelname)s %(filename)s '
+dict_config = {
+    "path_to_data": os.path.join(os.path.dirname(
+                                    os.path.realpath(__file__)), 
+                                    "goods2.info"),
+        
+    'format_logging': '%(asctime)s %(levelname)s %(filename)s '
                           '- %(funcName)s - %(message)s',
-        'level_logging': logging.INFO,
-        'filemode_logging': 'a',
-        'filename_logging': 'reporter.log'
-    }
+    'level_logging': logging.INFO,
+    'filemode_logging': 'a',
+    'filename_logging': 'reporter.log',
+        
+    "list_function": {
+        "calculate_mean": "get_value_info",
+        "add_from_file_in_database": "get_from_file",
+        "remove_expensive_good": "remove_expensive",
+        "remove_overdue_goods": "check_date_manafucture_list",
+        "execute_list_function": "exec_list_function"
+    },
 
-    logging.basicConfig(filename=json_dict_for_logging["filename_logging"], 
-                        filemode=json_dict_for_logging["filemode_logging"],
-                        level=json_dict_for_logging["level_logging"], 
-                        format=json_dict_for_logging["format_logging"])
-
-    info_list.get_from_file(file_data)
-
-
-    json_config_script = {
-        "path_to_file": os.path.join(os.path.dirname(
-                                        os.path.realpath(__file__)
-                                    ), "goods2.info"),
-        "list_functions": {
-            "get_from_file": info_list.get_from_file(file_data),
-            "get_value": info_list.get_value_info()['mean'],
-            "remove_expensive": info_list.remove_expensive(),
-            "check_date_manafucture_list": info_list.\
-                                             check_date_manafucture_list(),
-        },    
-        "logging_settings": json_dict_for_logging,
-        "command_for_execute": 'python3 '
-                               '{directory_with_script} -m'.\
-                                format(
-                                    directory_with_script=os.path.\
+    "run __main__": 'python3 '
+                    '{directory_with_script} -m'.\
+                            format(
+                                directory_with_script=os.path.\
                                                         dirname(os.path.\
                                                         realpath(__file__))
-                                )
-    }
+                            )
+}
 
-    path_to_config = os.path.join(os.path.dirname(os.path.\
-                                                realpath(__file__)),
-                                                "config_script.json")
+logging.basicConfig(filename=dict_config["filename_logging"], 
+                    filemode=dict_config["filemode_logging"],
+                    level=dict_config["level_logging"], 
+                    format=dict_config["format_logging"])
+
+
+if "execute_list_function" in dict_config["list_function"]:
+    exec_list_function(dict_config)
+
+
+path_to_config = os.path.join(os.path.dirname(os.path.\
+                                            realpath(__file__)),
+                                            "config_script.json")
         
-    with open(path_to_config, "w") as fp:
-        json.dump(json_config_script, fp, indent=5)
+with open(path_to_config, "w") as fp:
+    json.dump(dict_config, fp, indent=5)
 
 
