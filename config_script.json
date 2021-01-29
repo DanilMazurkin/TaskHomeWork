@@ -2,9 +2,11 @@
      "path_to_data": "/home/jatx/TaskHomeWork3/goods2.info",
      "format_logging": "%(asctime)s %(levelname)s %(filename)s - %(funcName)s - %(message)s",
      "level_logging": 20,
-     "PASS_DB": "ohshitbegi2019",
+     "PASS_DB": "CONPASS",
+     "NAME_DB": "DBNAME",
+     "HOST_DB": "DBHOST",
+     "USER_NAME_DB": "USER_NAME",
      "filemode_logging": "a",
      "filename_logging": "reporter.log",
-     "execute_function": "exec_list_function",
-     "run __main__": "python3 /home/jatx/TaskHomeWork3 -m"
+     "execute_function": "exec_list_function"
 }
