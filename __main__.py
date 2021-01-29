@@ -27,7 +27,7 @@ logging.basicConfig(filename=dict_config["filename_logging"],
                     format=dict_config["format_logging"])
 
 if "execute_function" in dict_config.keys():
-    exec_list_function(dict_config["execute_function"])
+    exec_list_function()
 
 
 path_to_config = os.path.join(os.path.dirname(os.path.realpath(__file__)),
