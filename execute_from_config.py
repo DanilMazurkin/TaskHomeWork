@@ -4,7 +4,7 @@ from file_work import FileWork
 
 
 
-def exec_list_function():
+def exec_list_function(dict_config):
     """
     Function read dict_config and call function
     proceeding from dict_config
@@ -27,10 +27,15 @@ def exec_list_function():
     if len(file_data) > 0:
         file_goods.save_in_directory()
         
-        dict_with_functions["get_from_file"](file_data)
-        dict_with_functions["remove_expensive"]()
+        dict_config["execute_function"] = "get_from_file"
+        dict_with_functions[dict_config["execute_function"]](file_data)
         
-        mean = dict_with_functions["get_value_info"]()["mean"]
+        dict_config["execute_function"] = "remove_expensive"
+        dict_with_functions[dict_config["execute_function"]]()
+        
+        dict_config["execute_function"] = "get_value_info"
+        mean = dict_with_functions[dict_config["execute_function"]]()["mean"]
         print("Среднее значение {mean}".format(mean=mean))
         
-        dict_with_functions["check_date_manafucture_list"]()
+        dict_config["execute_function"] = "check_date_manafucture_list"
+        dict_with_functions[dict_config["execute_function"]]()
