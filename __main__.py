@@ -12,10 +12,10 @@ dict_config = {
     'format_logging': '%(asctime)s %(levelname)s %(filename)s '
                           '- %(funcName)s - %(message)s',
     'level_logging': logging.INFO,
-    'PASS_DB': 'CONPASS',
-    'NAME_DB': 'DBNAME',
-    'HOST_DB': 'DBHOST',
-    'USER_NAME_DB': 'USER_NAME',
+    'PASS_DB_ENV': 'CONPASS',
+    'NAME_DB_ENV': 'DBNAME',
+    'HOST_DB_ENV': 'DBHOST',
+    'USER_NAME_DB_ENV': 'USER_NAME',
     'filemode_logging': 'a',
     'filename_logging': 'reporter.log',
     "execute_function": "exec_list_function"
@@ -26,8 +26,8 @@ logging.basicConfig(filename=dict_config["filename_logging"],
                     level=dict_config["level_logging"], 
                     format=dict_config["format_logging"])
 
-
-exec_list_function(dict_config, dict_config["execute_function"])
+if "execute_function" in dict_config.keys():
+    exec_list_function(dict_config["execute_function"])
 
 
 path_to_config = os.path.join(os.path.dirname(os.path.realpath(__file__)),
