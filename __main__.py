@@ -30,9 +30,8 @@ logging.basicConfig(filename=dict_config["filename_logging"],
 exec_list_function(dict_config, dict_config["execute_function"])
 
 
-path_to_config = os.path.join(os.path.dirname(os.path.\
-                                            realpath(__file__)),
-                                            "config_script.json")
+path_to_config = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                             "config_script.json")
         
 with open(path_to_config, "w") as fp:
     json.dump(dict_config, fp, indent=5)
