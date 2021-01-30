@@ -115,7 +115,7 @@ class GoodInfoList:
         Remove most expensive good from 
         table goods in database
         """
-        self.database.remove_goods_with_max_price()
+        return self.database.remove_goods_with_max_price()
     
     def check_date_manafucture_list(self):
         """
@@ -171,6 +171,18 @@ class GoodInfoList:
 
         return goods
     
+    def get_all_goods(self):
+        """
+        Function return all goods 
+        from database
+        :return: all goods in database
+        :rtype: db_models.Good
+        """
+        all_goods = self.database.get_all_goods()
+
+
+        return all_goods
+
     def get_list_most_expensive(self):
         """
         Get list with most 
@@ -181,6 +193,7 @@ class GoodInfoList:
         max_price = self.database.get_max_price()
 
         goods_expensive = self.database.get_goods_by_price(max_price)
+        goods_expensive = list(goods_expensive)
 
         return goods_expensive
 
@@ -193,7 +206,7 @@ class GoodInfoList:
 
         min_price = self.database.get_min_price()
         cheaps_goods = self.database.get_goods_by_price(min_price)
-        
+    
         return cheaps_goods
     
     def sort(self, name):
@@ -260,7 +273,6 @@ class GoodInfoList:
         
         if count_product_by_name == 0:
             logging.info("Нет товара с именем {name}".format(name=name))
-            print("Нет товара с именем {name}".format(name=name))
             return False
 
         goods_find_list = self.database.get_list_by_name(name)
@@ -270,16 +282,12 @@ class GoodInfoList:
         if availability is False:
             logging.info("Товар закончился ({product}) "
                         "(выручка - None)".format(product=name))
-            print("Товар закончился ({product}) "
-                        "(выручка - None)".format(product=name))
             return False
         
         total_amount = sum([good.amount for good in goods_find_list])
 
         if count_product_by_name == 1 and total_amount < amount:
             logging.info("Количество запрашиваемых товаров больше "
-                        "чем имеется в наличии (выручка - None)")
-            print("Количество запрашиваемых товаров больше "
                         "чем имеется в наличии (выручка - None)")
             return False
         
@@ -349,4 +357,10 @@ class GoodInfoList:
         return True
 
     def remove(self, name):
-        self.database.remove_by_name(name)
+        """
+        Remove good from database
+        """
+        return self.database.remove_by_name(name)
+    
+    def clear_list(self):
+        self.database.delete_tables_for_test()

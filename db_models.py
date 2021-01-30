@@ -19,10 +19,10 @@ class Good(Base):
     id = Column('id', Integer, primary_key=True)
     
     name = Column('name', String)
-    
-    amount = Column('amount', Integer)
 
     price = Column('price', Integer)
+
+    amount = Column('amount', Integer)
 
     id_provider = Column('id_provider', 
                          Integer, 
@@ -38,6 +38,32 @@ class Good(Base):
 
     provider = relationship("Provider", back_populates="good")
     shelf = relationship("Shelf", back_populates="good")
+
+    def __repr__(self):
+        return (
+            "<Good('{self.name}', '{self.amount}', "
+            "'{self.price}', '{self.id_provider}'," 
+            "'{self.id_shelf}')>".format(self=self)
+        )
+    
+    def __init__(self, name, amount, price,
+                id_provider, id_shelf):
+        self.name = name
+        self.amount = amount
+        self.price = price
+        self.id_provider = id_provider
+        self.id_shelf = id_shelf
+
+    
+    def __eq__(self, other):
+        return isinstance(other, Good) and other.name == self.name
+
+    def __hash__(self):
+        return hash((self.name,
+                    self.amount,
+                    self.price,
+                    self.id_provider,
+                    self.id_shelf))
 
 
 class Provider(Base):

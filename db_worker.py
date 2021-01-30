@@ -1,4 +1,5 @@
 import os
+import contextlib
 from sqlalchemy import create_engine
 from sqlalchemy import String, MetaData, Table, \
                         Column, Integer, ForeignKey, Date
@@ -143,6 +144,7 @@ class DB_Worker:
                                      good_info.price,
                                      id_provider, 
                                      id_shelf)
+            self.session.commit()
             
             return True
         else:
@@ -399,7 +401,7 @@ class DB_Worker:
         Return max price goods
         """
 
-        min_price = self.session.query(func.max(Good.price)).scalar()
+        min_price = self.session.query(func.min(Good.price)).scalar()
 
         return min_price
 
@@ -487,8 +489,11 @@ class DB_Worker:
         """
 
         goods_order_by_amount = self.session.query(Good).\
-                                    order_by(Good.amount)
+                                    order_by(Good.amount).all()
         
+        for good in goods_order_by_amount:
+            print(good)
+
         return goods_order_by_amount
     
     def get_sort_goods_by_price(self):
@@ -498,6 +503,7 @@ class DB_Worker:
 
         goods_price_by_price = self.session.query(Good).\
                                             order_by(Good.price)
+        
 
         return goods_price_by_price                       
     
@@ -530,12 +536,12 @@ class DB_Worker:
 
         max_price = self.get_good_with_max_price()
         
-        goods = self.session.query(Good).filter(
+        good = self.session.query(Good).filter(
                                         Good.price == max_price).\
                                 delete(synchronize_session='evaluate')
         self.session.commit()
 
-        return goods
+        return True
 
     def remove_last(self):
         """
@@ -567,3 +573,24 @@ class DB_Worker:
         self.session.query(Good).filter(Good.name == name).\
                 delete(synchronize_session='evaluate')
         self.session.commit()
+        
+        return name
+    
+    def get_all_goods(self):
+        """
+        Get all goods in database
+        """
+        all_goods = self.session.query(Good).all()
+        
+        return all_goods
+
+    def truncate_all_tables(self):
+        """
+        Delete content all tables in database
+        """
+
+        with contextlib.closing(self.engine.connect()) as con:
+            trans = con.begin()
+            for table in reversed(self.metadata.sorted_tables):
+                con.execute(table.delete())
+            trans.commit()

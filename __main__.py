@@ -1,7 +1,8 @@
 import os
 import logging
 import json
-from execute_from_config import exec_list_function
+import good_info
+from execute_from_config import exec_function
 
 
 dict_config = {
@@ -18,22 +19,36 @@ dict_config = {
     'USER_NAME_DB_ENV': 'USER_NAME',
     'filemode_logging': 'a',
     'filename_logging': 'reporter.log',
-    "execute_function": "exec_list_function"
+    "execute_function": "get_from_file"
 }
+
+info_list = good_info.GoodInfoList()
+ending_goods = info_list.get_list_ending_goods()
+
+for good in ending_goods:
+    print(good)
 
 logging.basicConfig(filename=dict_config["filename_logging"], 
                     filemode=dict_config["filemode_logging"],
                     level=dict_config["level_logging"], 
                     format=dict_config["format_logging"])
 
-if "execute_function" in dict_config.keys():
-    exec_list_function(dict_config)
-
-
 path_to_config = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                              "config_script.json")
+
+if os.path.exists(path_to_config):
+    with open(path_to_config, "r") as json_data:
         
-with open(path_to_config, "w") as fp:
-    json.dump(dict_config, fp, indent=5)
+        config_from_file = json.load(json_data)
+
+        if "execute_function" in config_from_file.keys():
+            exec_function(config_from_file)
+
+else: 
+    with open(path_to_config, "w") as fp:
+        json.dump(dict_config, fp, indent=5)
+
+        if "execute_function" in dict_config.keys():
+            exec_function(dict_config)
 
 
