@@ -8,5 +8,6 @@
      "USER_NAME_DB_ENV": "USER_NAME",
      "filemode_logging": "a",
      "filename_logging": "reporter.log",
-     "execute_function": "remove_expensive"
+     "execute_function": "",
+     "exec_all_function": false
 }

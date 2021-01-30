@@ -2,7 +2,8 @@ import os
 import logging
 import json
 import good_info
-from execute_from_config import exec_function
+from execute_from_config import (exec_function, 
+                                exec_all_function)
 
 
 dict_config = {
@@ -19,14 +20,10 @@ dict_config = {
     'USER_NAME_DB_ENV': 'USER_NAME',
     'filemode_logging': 'a',
     'filename_logging': 'reporter.log',
-    "execute_function": "get_from_file"
+    "execute_function": "get_from_file",
+    "exec_all_function": False
 }
 
-info_list = good_info.GoodInfoList()
-ending_goods = info_list.get_list_ending_goods()
-
-for good in ending_goods:
-    print(good)
 
 logging.basicConfig(filename=dict_config["filename_logging"], 
                     filemode=dict_config["filemode_logging"],
@@ -43,7 +40,8 @@ if os.path.exists(path_to_config):
 
         if "execute_function" in config_from_file.keys():
             exec_function(config_from_file)
-
+        if "exec_all_function" in config_from_file.keys():
+            exec_all_function(config_from_file)
 else: 
     with open(path_to_config, "w") as fp:
         json.dump(dict_config, fp, indent=5)
