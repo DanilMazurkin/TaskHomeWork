@@ -490,9 +490,6 @@ class DB_Worker:
 
         goods_order_by_amount = self.session.query(Good).\
                                     order_by(Good.amount).all()
-        
-        for good in goods_order_by_amount:
-            print(good)
 
         return goods_order_by_amount
     
@@ -594,3 +591,6 @@ class DB_Worker:
             for table in reversed(self.metadata.sorted_tables):
                 con.execute(table.delete())
             trans.commit()
+    
+    def get_provider_by_id(id_provider):
+        print("hello")

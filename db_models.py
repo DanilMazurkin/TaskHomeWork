@@ -5,9 +5,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from sqlalchemy.orm import relationship
 
+
 Base = declarative_base()
-
-
+    
 class Good(Base):
     """
     Good represents table 
@@ -38,13 +38,6 @@ class Good(Base):
 
     provider = relationship("Provider", back_populates="good")
     shelf = relationship("Shelf", back_populates="good")
-
-    def __repr__(self):
-        return (
-            "<Good('{self.name}', '{self.amount}', "
-            "'{self.price}', '{self.id_provider}'," 
-            "'{self.id_shelf}')>".format(self=self)
-        )
     
     def __init__(self, name, amount, price,
                 id_provider, id_shelf):

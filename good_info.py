@@ -168,6 +168,7 @@ class GoodInfoList:
         :rtype: list Query 
         """
         goods = self.database.get_goods_ending()
+        goods = list(goods)
 
         return goods
     
@@ -206,6 +207,7 @@ class GoodInfoList:
 
         min_price = self.database.get_min_price()
         cheaps_goods = self.database.get_goods_by_price(min_price)
+        cheaps_goods = list(cheaps_goods)
     
         return cheaps_goods
     
