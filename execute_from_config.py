@@ -11,7 +11,7 @@ def exec_all_function():
 
     if len(file_data) > 0:
         file_goods.save_in_directory()
-        info_list(file_data)
+        info_list.get_from_file(file_data)
         
     info_list.remove_expensive()
     info_list.check_date_manafucture_list()
