@@ -1,5 +1,4 @@
 from math import sqrt
-from dateutil.parser import parse
 from datetime import datetime, timedelta
 from operator import attrgetter
 from db_worker import DB_Worker
@@ -363,6 +362,3 @@ class GoodInfoList:
         Remove good from database
         """
         return self.database.remove_by_name(name)
-    
-    def clear_list(self):
-        self.database.delete_tables_for_test()

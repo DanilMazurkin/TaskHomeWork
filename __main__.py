@@ -21,7 +21,6 @@ dict_config = {
     'filemode_logging': 'a',
     'filename_logging': 'reporter.log',
     "execute_function": "get_from_file",
-    "exec_all_function": False
 }
 
 
@@ -40,8 +39,7 @@ if os.path.exists(path_to_config):
 
         if "execute_function" in config_from_file.keys():
             exec_function(config_from_file)
-        if "exec_all_function" in config_from_file.keys():
-            exec_all_function(config_from_file)
+            
 else: 
     with open(path_to_config, "w") as fp:
         json.dump(dict_config, fp, indent=5)
